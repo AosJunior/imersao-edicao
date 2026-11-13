@@ -9,9 +9,19 @@
       /*FONTES*/
       * { margin: 0; padding: 0; box-sizing: border-box; }
       html, body { width: 1080px; height: 1920px; overflow: hidden; background: #000; }
-      #root { position: relative; width: 1080px; height: 1920px; overflow: hidden; color: #fff;
+      #root { position: relative; width: 1080px; height: 1920px; overflow: hidden; color: #fff; background: #0E0E10;
               font-family: "Legenda", "Helvetica Neue", "Segoe UI", Arial, sans-serif; }
+      /* o palco: o vídeo inteiro. Quando falta espaço acima da cabeça, ele se afasta (encolhe preso à base) */
+      #palco { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; overflow: hidden;
+               transform-origin: 50% 100%; }
       #fundo { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; object-fit: cover; }
+      #medida { position: absolute; left: 0; top: 0; width: 1080px; visibility: hidden; pointer-events: none;
+                display: flex; flex-direction: column; align-items: flex-start; }
+      .cruza .in { outline: 12px solid #FF2D2D; outline-offset: 4px; }
+      .aviso-rosto { position: absolute; left: 40px; top: 300px; z-index: 9; background: #FF2D2D; color: #fff;
+                     font: 700 44px Arial, sans-serif; padding: 14px 24px; border-radius: 12px; }
+      .ver-rosto { position: absolute; z-index: 8; border: 5px dashed #FF2D2D; box-sizing: border-box; }
+      .ver-rosto.cabelo { border-color: #FFD23F; }
       em { font-family: "Destaque", Georgia, "Times New Roman", serif; font-style: italic; font-weight: 400; }
 
       /* legenda: troca seca com a fala */
@@ -21,22 +31,21 @@
       .leg em { font-size: 1.3em; line-height: 0.8; color: var(--acento); }
 
       /* peças: cada uma numa faixa de largura cheia, crescendo para cima a partir da base */
-      .peca { position: absolute; left: 0; width: 1080px; display: flex; justify-content: center; z-index: 3; }
-      .peca.esquerda { justify-content: flex-start; padding-left: 80px; }
-      .peca.direita { justify-content: flex-end; padding-right: 80px; }
-      .peca .in { transform-origin: 50% 100%; }
+      .peca { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; z-index: 3; }
+      .peca .in { position: absolute; transform-origin: 50% 100%; }
+      .sem-rabo .balao::after { display: none; }
 
       .placa { background: #FCFCFC; color: #111; border-radius: 0.3em; padding: 0.32em 0.62em 0.36em; max-width: 940px;
                font-weight: 700; font-size: 1em; line-height: 1.1; text-align: center; text-wrap: balance;
                letter-spacing: -0.01em; box-shadow: 0 12px 44px rgba(0, 0, 0, 0.3); }
       .placa em { font-size: 1.24em; line-height: 0.9; letter-spacing: 0; display: inline-block; }
 
-      .balao { position: relative; background: #111; color: #fff; border-radius: 999px; padding: 0.36em 0.82em 0.4em;
+      .balao { position: relative; background: #FCFCFC; color: #111; border-radius: 999px; padding: 0.36em 0.82em 0.4em;
                font-weight: 700; font-size: 1em; line-height: 1.1; white-space: nowrap;
                box-shadow: 0 10px 34px rgba(0, 0, 0, 0.35); }
       .balao::after { content: ""; position: absolute; left: 50%; bottom: -0.34em; margin-left: -0.3em;
                       border-left: 0.3em solid transparent; border-right: 0.3em solid transparent;
-                      border-top: 0.38em solid #111; }
+                      border-top: 0.38em solid #FCFCFC; }
       .balao em { font-size: 1.22em; line-height: 0.9; }
 
       .num { text-align: center; text-shadow: 0 6px 30px rgba(0, 0, 0, 0.55), 0 2px 5px rgba(0, 0, 0, 0.4); }
@@ -49,8 +58,8 @@
                   margin-top: 0.3em; letter-spacing: 0; }
       .num .rot em { font-size: 1.2em; }
 
-      .graf { width: 920px; background: rgba(17, 17, 17, 0.9); border-radius: 36px; padding: 0.95em 1.1em 1.05em;
-              box-shadow: 0 14px 50px rgba(0, 0, 0, 0.35); font-size: 1em; }
+      .graf { width: 920px; background: rgba(24, 24, 27, 0.92); border-radius: 36px; padding: 0.95em 1.1em 1.05em;
+              box-shadow: 0 14px 50px rgba(0, 0, 0, 0.35), inset 0 0 0 2px rgba(255, 255, 255, 0.1); font-size: 1em; }
       .graf .tit { font-family: "Apoio", "Legenda", Arial, sans-serif; font-weight: 500; font-size: 0.92em;
                    color: rgba(255, 255, 255, 0.72); margin-bottom: 0.2em; }
       .graf .lin { display: grid; grid-template-columns: 5.6em 1fr; column-gap: 0.55em; align-items: center; margin-top: 0.55em; }
@@ -60,8 +69,8 @@
       .graf .lin.destaque .barra { background: var(--acento); }
       .graf .valor { margin-left: 0.38em; font-weight: 700; font-size: 0.95em; white-space: nowrap; }
       .graf .lin.destaque .valor { color: var(--acento); }
-      .etapas { width: 920px; background: rgba(17, 17, 17, 0.9); border-radius: 36px; padding: 0.7em 1.05em 0.95em;
-                box-shadow: 0 14px 50px rgba(0, 0, 0, 0.35); font-size: 1em; }
+      .etapas { width: 920px; background: rgba(24, 24, 27, 0.92); border-radius: 36px; padding: 0.7em 1.05em 0.95em;
+                box-shadow: 0 14px 50px rgba(0, 0, 0, 0.35), inset 0 0 0 2px rgba(255, 255, 255, 0.1); font-size: 1em; }
       .etapas .topo { display: flex; align-items: baseline; justify-content: center; gap: 0.5em; line-height: 1; }
       .etapas .n { font-weight: 700; font-size: 4.3em; letter-spacing: -0.03em; display: inline-block; }
       .etapas .t { font-family: "Destaque", Georgia, serif; font-style: italic; font-size: 2.3em; }
@@ -74,14 +83,17 @@
   </head>
   <body>
     <div id="root" data-composition-id="main" data-start="0" data-duration="__DUR__" data-width="1080" data-height="1920">
-      <video id="fundo" src="assets/video.mp4" playsinline data-has-audio="true" data-start="0" data-duration="__DUR__"
-             data-track-index="0" data-volume="1"></video>
+      <div id="palco">
+        <video id="fundo" src="assets/video.mp4" playsinline data-has-audio="true" data-start="0" data-duration="__DUR__"
+               data-track-index="0" data-volume="1"></video>
+      </div>
+      <div id="medida"></div>
     </div>
     <script>
       // Gerado pelo motion.py a partir do insercoes.json. Para mudar o vídeo, mude o plano e rode de novo.
       const D = __DADOS__;
-      const root = document.getElementById("root");
-      const E = D.estilo, ZS = D.zona, CAB = D.cabeca;
+      const root = document.getElementById("root"), palco = document.getElementById("palco"), medida = document.getElementById("medida");
+      const E = D.estilo, ZS = D.zona;
       root.style.setProperty("--acento", E.cor_destaque);
       const sombra = (k) => `0 0 14px rgba(0,0,0,${E.sombra * 0.8 * k}), 0 3px 6px rgba(0,0,0,${E.sombra})`;
       const el = (tag, cls, htmlTxt) => { const x = document.createElement(tag); if (cls) x.className = cls; if (htmlTxt != null) x.innerHTML = htmlTxt; return x; };
@@ -94,62 +106,161 @@
         const s = Math.abs(v).toFixed(casas), p = s.split(".");
         return (v < 0 ? "-" : "") + p[0].replace(/\B(?=(\d{3})+(?!\d))/g, ".") + (p[1] ? "," + p[1] : "");
       };
+      // geometria: caixas [x0, y0, x1, y1] no quadro 1080×1920
+      const FOLGA = 24, X0 = 40, X1 = 1040, ESCALA_MIN = 0.68;
+      const afastada = (b, s) => [540 + (b[0] - 540) * s, 1920 - (1920 - b[1]) * s, 540 + (b[2] - 540) * s, 1920 - (1920 - b[3]) * s];
+      const toca = (a, b) => a[0] < b[2] && a[2] > b[0] && a[1] < b[3] && a[3] > b[1];
+      const TAM = { gancho: 72, balao: 56, numero: 230, etapas: 44, grafico: 40 };      // tamanho de desenho
+      const PISO = { gancho: 54, balao: 46, numero: 150, etapas: 38, grafico: 34 };     // menor tamanho ainda legível
 
-      // ---- legenda
-      const legs = D.legenda.map((g) => {
-        const c = clip("leg", g.a, g.b, 1), fs = E.tamanho;
-        c.style.fontSize = fs + "px"; c.style.color = E.cor; c.style.textShadow = sombra(1);
-        c.style.top = (E.legenda_y - fs * 0.8) + "px";
-        c.appendChild(el("span", "", g.t));
-        c.querySelectorAll("em").forEach((m) => { m.style.fontSize = E.escala_destaque + "em"; });
-        return c;
-      });
-
-      // ---- peças: acima da cabeça quando cabe; senão, abaixo do rosto (nunca por cima dele)
-      const pecas = D.camadas.map((p) => {
-        const base = p.y != null ? p.y : p.em_cima ? CAB - (p.tipo === "balao" ? 34 : 50) : Math.min(ZS[1] - 40, 1520);
-        const c = clip("peca " + (p.tipo === "balao" ? (p.lado || "centro") : ""), p.de, p.ate, 2);
-        c.style.bottom = (1920 - base) + "px";
-        let inn;
-        if (p.tipo === "gancho") {
-          inn = el("div", "in", `<div class="placa">${p.texto}</div>`); inn.style.fontSize = "72px";
-        } else if (p.tipo === "balao") {
-          inn = el("div", "in", `<div class="balao">${p.texto}</div>`); inn.style.fontSize = "56px";
-        } else if (p.tipo === "numero") {
-          inn = el("div", "in num", `<div class="linha">${p.prefixo ? `<span class="pre">${p.prefixo}</span>` : ""}<span class="val">${numero(0, p.casas)}</span>${p.sufixo ? `<span class="suf">${p.sufixo}</span>` : ""}</div>${p.texto ? `<div class="rot">${p.texto}</div>` : ""}`);
-          inn.style.fontSize = "230px";
-        } else if (p.tipo === "etapas") {
-          inn = el("div", "in etapas", `<div class="topo"><span class="n">${p.numero}</span>${p.texto ? `<span class="t">${p.texto}</span>` : ""}</div><div class="segs" style="grid-template-columns: repeat(${p.itens.length}, 1fr)">` +
+      const conteudo = (p) => {
+        if (p.tipo === "gancho") return el("div", "in", `<div class="placa">${p.texto}</div>`);
+        if (p.tipo === "balao") return el("div", "in", `<div class="balao">${p.texto}</div>`);
+        if (p.tipo === "numero") return el("div", "in num", `<div class="linha">${p.prefixo ? `<span class="pre">${p.prefixo}</span>` : ""}<span class="val">${numero(p.valor, p.casas)}</span>${p.sufixo ? `<span class="suf">${p.sufixo}</span>` : ""}</div>${p.texto ? `<div class="rot">${p.texto}</div>` : ""}`);
+        if (p.tipo === "etapas") return el("div", "in etapas", `<div class="topo"><span class="n">${p.numero}</span>${p.texto ? `<span class="t">${p.texto}</span>` : ""}</div><div class="segs" style="grid-template-columns: repeat(${p.itens.length}, 1fr)">` +
             p.itens.map((it) => `<div class="seg"><div class="b"><div class="f"></div></div><div class="r">${it.texto}</div></div>`).join("") + "</div>");
-          inn.style.fontSize = "44px";
-        } else if (p.tipo === "grafico") {
+        if (p.tipo === "grafico") {
           const max = Math.max(...p.barras.map((b) => b.valor), 1e-9);
-          inn = el("div", "in graf", (p.titulo ? `<div class="tit">${p.titulo}</div>` : "") + p.barras.map((b) =>
+          return el("div", "in graf", (p.titulo ? `<div class="tit">${p.titulo}</div>` : "") + p.barras.map((b) =>
             `<div class="lin${b.destaque ? " destaque" : ""}"><div class="rotulo">${b.rotulo}</div><div class="trilho"><div class="barra" style="width:${(Math.max(b.valor, 0) / max * 72).toFixed(2)}%"></div><div class="valor">${b.texto}</div></div></div>`).join(""));
-          inn.style.fontSize = "40px";
-        } else {
-          inn = el("div", "in", p.html);
         }
-        c.appendChild(inn);
-        return { p, c, inn, alto: p.alto };
-      });
+        return el("div", "in", p.html);
+      };
 
+      const pecas = [], legs = [];
       const montar = () => {
-        // encolhe o que passou da largura ou da altura livre
-        legs.forEach((c) => { const s = c.firstChild; let fs = parseFloat(c.style.fontSize), n = 0;
-          while (s.offsetWidth > 940 && fs > 40 && n++ < 60) { fs -= 4; c.style.fontSize = fs + "px"; } });
-        pecas.forEach(({ p, inn, alto }) => {
-          if (p.tipo === "html") return;
-          let fs = parseFloat(inn.style.fontSize), n = 0;
-          const piso = { gancho: 40, balao: 34, numero: 110, etapas: 26, grafico: 26 }[p.tipo];
-          if (p.tipo === "numero") {                         // mede com o número final, que é o mais largo
-            inn.querySelector(".val").textContent = numero(p.valor, p.casas);
+        // ---------- 1. onde cada peça pousa: nunca em cima do rosto
+        D.camadas.forEach((p) => {
+          const inn = conteudo(p);
+          inn.style.position = "static";
+          medida.appendChild(inn);
+          const fixo = p.tipo === "html";
+          const medir = (fs) => {
+            if (!fixo) inn.style.fontSize = fs + "px";
+            const w = inn.offsetWidth, h = inn.offsetHeight;
+            return p.tipo === "balao" ? [w + 6, h + Math.ceil(w * 0.053) + 22] : [w, h];   // balão: inclinação e rabinho
+          };
+          const F0 = TAM[p.tipo] || 40, piso = PISO[p.tipo] || 40;
+          const tamanhos = fixo ? [F0] : Array.from({ length: Math.floor((F0 - piso) / 2) + 1 }, (_, i) => F0 - 2 * i);
+          let fs0 = F0;                                       // o maior tamanho que cabe na largura
+          for (const fs of tamanhos) { fs0 = fs; if (medir(fs)[0] <= X1 - X0) break; }
+          const cabem = tamanhos.filter((fs) => fs <= fs0);
+          const z = p.z || [0, 0, 0, 0], f = p.f || [0, 0, 0, 0];
+          const folga = p.tipo === "balao" ? 12 : FOLGA;
+          let r = null;
+          const emCima = (fs, s) => {                         // cabe inteira entre a zona segura e o cabelo?
+            const [w, h] = medir(fs), topo = afastada(z, s)[1];
+            return topo - folga - h >= ZS[0] ? { modo: s < 1 ? "afasta" : "cima", fs, s, w, h, base: topo - folga } : null;
+          };
+          if (p.y != null) {
+            const [w, h] = medir(fs0); r = { modo: "fixo", fs: fs0, s: 1, w, h, base: p.y };
+          } else if (!p.f) {
+            const [w, h] = medir(fs0); r = { modo: "cima", fs: fs0, s: 1, w, h, base: ZS[0] + h + 40 };
           }
-          while ((inn.offsetWidth > 940 || inn.offsetHeight > alto) && fs > piso && n++ < 80) { fs -= fs > 120 ? 8 : 2; inn.style.fontSize = fs + "px"; }
+          // a) em cima da cabeça, no tamanho de desenho (ou até 12 % menor, sem mexer no vídeo)
+          if (!r) for (const fs of cabem) { if (fs < fs0 * 0.88) break; r = emCima(fs, 1); if (r) break; }
+          // b) afasta o vídeo o quanto precisa para a peça caber em cima, até o limite
+          if (!r) for (const fs of cabem) {
+            const h = medir(fs)[1], s = (1920 - (ZS[0] + h + folga)) / (1920 - z[1]);
+            if (s >= ESCALA_MIN) { r = emCima(fs, Math.min(0.97, Math.floor(s * 1000) / 1000)); if (r) break; }
+          }
+          // c) terço de baixo, entre o queixo e o fim da área segura
+          if (!r) for (const fs of cabem) {
+            const [w, h] = medir(fs), limite = ZS[1] - 20;
+            if (limite - (f[3] + FOLGA) >= h) { r = { modo: "baixo", fs, s: 1, w, h, base: Math.max(f[3] + FOLGA + h, Math.min(limite, 1520)) }; break; }
+          }
+          // d) ao lado do rosto
+          if (!r) for (const fs of cabem) {
+            const [w, h] = medir(fs), esq = z[0] - FOLGA - X0, dir = X1 - (z[2] + FOLGA);
+            if (w <= Math.max(esq, dir)) {
+              const base = Math.min(ZS[1] - 20, Math.max(ZS[0] + h, (z[1] + f[3]) / 2 + h / 2));
+              r = { modo: "lado", fs, s: 1, w, h, base, x: esq >= dir ? z[0] - FOLGA - w : z[2] + FOLGA }; break;
+            }
+          }
+          if (!r) { const [w, h] = medir(piso); r = { modo: "cima", fs: piso, s: 1, w, h, base: Math.max(ZS[0] + h, z[1] - folga), falhou: true }; }
+          pecas.push({ p, inn, r, medir, emCima, z, f });
+        });
+        // peças vizinhas que afastam o vídeo usam o mesmo afastamento (o menor): o vídeo não fica indo e voltando
+        const blocos = [];
+        pecas.filter((q) => q.r.s < 1).forEach((q) => {
+          const u = blocos[blocos.length - 1];
+          if (u && q.p.de - u[u.length - 1].p.ate < 0.9) u.push(q); else blocos.push([q]);
+        });
+        blocos.forEach((bl) => {
+          const s = Math.min(...bl.map((q) => q.r.s));
+          bl.forEach((q) => { if (q.r.s !== s) q.r = q.emCima(q.r.fs, s) || q.r; });
+        });
+        // caixa final e conferência contra o rosto (já com o vídeo afastado, se for o caso)
+        pecas.forEach((q) => {
+          const { p, inn, r, z, f } = q;
+          q.medir(r.fs);
+          let x = r.x != null ? r.x : (1080 - r.w) / 2;
+          if (p.tipo === "balao" && r.x == null && p.lado === "esquerda") x = Math.max(X0, Math.min(x, z[0] + 20));
+          if (p.tipo === "balao" && r.x == null && p.lado === "direita") x = Math.min(X1 - r.w, Math.max(x, z[2] - 20 - r.w));
+          const caixa = [x, r.base - r.h, x + r.w, r.base], rosto = afastada(f, r.s);
+          const ok = !r.falhou && (!p.f || !toca(caixa, rosto)) && (r.modo === "fixo" || (caixa[1] >= ZS[0] - 1 && caixa[3] <= ZS[1] + 1));
+          const c = clip("peca" + (r.modo === "cima" || r.modo === "afasta" ? "" : " sem-rabo") + (ok ? "" : " cruza"), p.de, p.ate, 2);
+          c.dataset.peca = p.id; c.dataset.modo = r.modo; c.dataset.escala = String(r.s); c.dataset.ok = ok ? "1" : "0";
+          c.dataset.caixa = caixa.map((v) => v.toFixed(1)).join(","); c.dataset.rosto = rosto.map((v) => v.toFixed(1)).join(",");
+          inn.style.position = "absolute";
+          inn.style.left = (x + (p.tipo === "balao" ? 3 : 0)) + "px";
+          inn.style.top = (r.base - r.h + (p.tipo === "balao" ? Math.ceil(r.w * 0.053) / 2 : 0)) + "px";
+          c.appendChild(inn);
+          if (!ok) c.appendChild(el("div", "aviso-rosto", "COBRE O ROSTO: " + p.id));
+          if (!ok && D.travar) c.style.display = "none";      // segunda trava: no vídeo, peça que tocaria o rosto não aparece
+          if (D.debug && p.f) [[afastada(z, r.s), "ver-rosto cabelo"], [rosto, "ver-rosto"]].forEach(([b, cls]) => {
+            const d = el("div", cls); d.style.left = b[0] + "px"; d.style.top = b[1] + "px"; d.style.width = (b[2] - b[0]) + "px"; d.style.height = (b[3] - b[1]) + "px"; c.appendChild(d);
+          });
           if (p.tipo === "numero") inn.querySelector(".val").textContent = numero(0, p.casas);
+          q.c = c; q.caixa = caixa; q.rosto = rosto;
         });
 
+        // ---------- 2. legenda: abaixo do rosto, dentro da área segura; some se cair em cima do rosto ou de uma peça
+        const fs = E.tamanho;
+        let pe = E.legenda_y;
+        if (D.rosto && pe - fs * 0.95 < D.rosto.baixo + 16) pe = Math.min(ZS[1] - fs * 0.3, D.rosto.baixo + 16 + fs * 0.95);
+        const rostoEm = (a, b) => {                           // o rosto enquanto o grupo está na tela
+          const perto = (D.rosto ? D.rosto.amostras : []).filter((m) => m[0] >= a - 0.4 && m[0] <= b + 0.4);
+          return perto.length ? [Math.min(...perto.map((m) => m[1])), Math.min(...perto.map((m) => m[2])), Math.max(...perto.map((m) => m[3])), Math.max(...perto.map((m) => m[4]))] : null;
+        };
+        D.legenda.forEach((g) => {
+          const span = el("span", "", g.t);
+          span.style.cssText = `display:inline-block;white-space:nowrap;font-weight:700;line-height:1;font-size:${fs}px`;
+          span.querySelectorAll("em").forEach((m) => { m.style.fontSize = E.escala_destaque + "em"; });
+          medida.appendChild(span);
+          let tam = fs, n = 0;
+          while (span.offsetWidth > 940 && tam > 44 && n++ < 40) { tam -= 4; span.style.fontSize = tam + "px"; }
+          // com o vídeo afastado o rosto desce: a legenda desce junto, para baixo do queixo
+          const junto = pecas.filter((q) => g.a < q.p.ate + 0.5 && g.b > q.p.de - 0.5);
+          let peG = pe;
+          junto.forEach((q) => { if (q.r.s < 1) peG = Math.max(peG, Math.min(ZS[1] - tam * 0.3, q.rosto[3] + 16 + tam * 0.95)); });
+          const w = span.offsetWidth, caixa = [540 - w / 2, peG - tam * 0.95, 540 + w / 2, peG + tam * 0.3];
+          let oculta = caixa[3] > ZS[1] + 1;
+          junto.forEach((q) => { if (toca(caixa, q.caixa) || (q.r.s < 1 && toca(caixa, q.rosto))) oculta = true; });
+          const rr = rostoEm(g.a, g.b);
+          if (rr && toca(caixa, rr) && !junto.some((q) => q.r.s < 1)) oculta = true;
+          const c = clip("leg", g.a, g.b, 1);
+          c.style.fontSize = tam + "px"; c.style.color = E.cor; c.style.textShadow = sombra(1);
+          c.style.top = (peG - tam * 0.8) + "px";
+          span.style.cssText = ""; c.appendChild(span);
+          c.querySelectorAll("em").forEach((m) => { m.style.fontSize = E.escala_destaque + "em"; });
+          if (oculta) { c.style.display = "none"; c.dataset.oculta = "1"; }
+          legs.push(c);
+        });
+        document.documentElement.dataset.pronto = "1";
+
         const tl = gsap.timeline({ paused: true });
+        // ---------- 3. o vídeo se afasta enquanto a peça que precisa de espaço está na tela
+        // afasta ANTES de a primeira peça do bloco entrar e só volta DEPOIS de a última sair: nada toca o rosto no caminho
+        let livre = 0;
+        blocos.forEach((bl) => {
+          const s = bl[0].r.s, de = bl[0].p.de, ate = bl[bl.length - 1].p.ate;
+          const t0 = Math.max(livre, de - 0.5);
+          if (t0 <= 0.02 || de - t0 < 0.12) tl.set(palco, { scale: s, borderRadius: 40 }, Math.max(0, Math.min(t0, de)));
+          else tl.to(palco, { scale: s, borderRadius: 40, duration: Math.min(0.5, de - t0), ease: "power2.inOut" }, t0);
+          tl.to(palco, { scale: 1, borderRadius: 0, duration: 0.5, ease: "power2.inOut" }, ate);
+          livre = ate + 0.5;
+        });
         pecas.forEach(({ p, inn }) => {
           const de = p.de, ate = p.ate;
           if (p.tipo === "gancho") {                         // já se lê no quadro 0

@@ -62,9 +62,14 @@ scripts leem umas das outras por caminho relativo, então ficaram com o nome do 
 ### Entrou
 
 - **`/cor`** (skill nova): `cor/scripts/aplicar.py`. Ver "Como a cor foi separada".
-- **`/inserir` com gerador**: `inserir/scripts/motion.py` + `inserir/modelos/motion.html`. O Claude escreve um
-  plano pequeno (`insercoes.json`: gancho, balão em cima da cabeça, número, etapas, gráfico, legenda) e o script
-  monta a página do HyperFrames, tira o storyboard (`snapshot`) e renderiza (`render`). Motivo: no kit o motion é
+- **`/inserir` com gerador**: `inserir/scripts/motion.py` + `inserir/modelos/motion.html` + `inserir/scripts/rosto.py`.
+  O Claude escreve um plano pequeno (`insercoes.json`: gancho, balão em cima da cabeça, número, etapas, gráfico,
+  legenda) e o script monta a página do HyperFrames, tira o storyboard (`snapshot`) e renderiza (`render`).
+  **O rosto é zona proibida**: o `rosto.py` (o mesmo detector do `enquadrar.py` do kit) acha o rosto nos instantes
+  de cada peça; a página põe a peça em cima da cabeça se couber inteira, senão afasta o vídeo (encolhe preso à
+  base, até 68 %) para abrir a faixa de cima, senão põe abaixo ou ao lado do rosto. A trava: antes do storyboard e
+  do vídeo o script abre a página no navegador do HyperFrames, lê onde cada peça pousou e confere contra a caixa do
+  rosto; peça que toca sai em vermelho no storyboard e o `--video` não grava. Motivo: no kit o motion é
   HTML escrito do zero por agentes em Opus (os 20 a 40 min da reunião); com 40 leigos no plano de 20 dólares isso
   não fecha. O modelo fixa o desenho e o movimento; o aluno muda texto, tempo e posição pelo plano. **É código
   novo, de hoje, testado só neste Mac.**
@@ -175,9 +180,25 @@ A reunião estimou de 20 a 40 min para as inserções. Aqui, com o modelo pronto
 de 52 a 100 s. Em máquina mais fraca conte com 2 a 10 min.
 
 O ensaio corrigiu: a receita de "sobrou uma pausa" (dividir o trecho sozinha piorava; agora divide e aperta as bordas
-com `ajustes`), os ids `F<n>` do exemplo do `/inserir`, a altura mínima das peças, o `"y"` para a peça que desce,
-`legenda.apagar` para palavra que o Whisper inventa, o passo de "mais quente" (0,2 era invisível; agora 0,4), a
-legenda que piscava 0,4 s antes de uma peça e a palavra sozinha no fim da frase.
+com `ajustes`), os ids `F<n>` do exemplo do `/inserir`, `legenda.apagar` para palavra que o Whisper inventa, o passo
+de "mais quente" (0,2 era invisível; agora 0,4), a legenda que piscava 0,4 s antes de uma peça e a palavra sozinha
+no fim da frase.
+
+**Rosto coberto (corrigido depois do ensaio).** A primeira versão punha as peças por uma altura medida à mão
+(`cabeca_y`) e, no enquadramento fechado, o gancho e o balão caíam em cima dos olhos. Agora o script mede o rosto e
+decide (ver "Entrou"). Conferido nos dois enquadramentos, quadro a quadro, com a zona do rosto desenhada por cima
+(`--storyboard --ver-rosto`):
+
+| Enquadramento | O que o script fez | Animação |
+|---|---|---|
+| Fechado (rosto de y 100 a 1050, sem espaço em cima) | afastou o vídeo para 74 % no gancho e no balão e para 68 % nas etapas; legenda desceu para baixo do queixo | 70 s para 13 s de vídeo |
+| Aberto (um palmo acima da cabeça) | gancho e balão em cima da cabeça, sem mexer no vídeo; etapas com o vídeo a 90 % | 73 s para 20 s de vídeo |
+
+Os dois tempos foram medidos com a máquina muito ocupada por outros trabalhos (carga acima de 40); sem carga a mesma
+animação levava de 52 a 80 s. A trava foi testada forçando o gancho em cima do rosto (`"y": 700`): o storyboard saiu
+com o contorno vermelho e o `--video` recusou com código 2. O detector acha rosto de frente e de perfil; **não foi
+testado** com óculos escuros, boné, duas pessoas no quadro ou rosto muito pequeno. Sem rosto achado, o script pede
+`"rosto": [x, y, largura, altura]` no plano.
 
 ### Não testado
 
@@ -206,7 +227,10 @@ Travam o aluno:
    (`winget install -e --id Microsoft.VCRedist.2015+.x64`). Windows em ARM (Snapdragon): o Whisper pode não instalar.
 5. **HyperFrames** com espaço e acento no caminho, o aviso do Firewall para o Node e o antivírus no navegador dele:
    nunca rodou num Windows. Plano B do SKILL: seguir para o `/sonorizar` com o `2-cor.mp4`.
-6. **Vídeo deitado + acento no caminho**: o `enquadrar.py` (OpenCV) não abre caminho com acento no Windows.
+6. **Vídeo deitado + acento no caminho**: o `enquadrar.py` (OpenCV) não abre caminho com acento no Windows. O
+   `rosto.py` do `/inserir` foi escrito para não depender disso (quadros por cano do ffmpeg, detector lido da
+   memória), mas não rodou num Windows. A conferência do rosto abre o navegador do HyperFrames direto
+   (`--dump-dom`); se ela não rodar, o script avisa e a página deixa de fora do vídeo a peça que tocaria o rosto.
 7. **Mover a pasta depois do passo 1**: a decupagem guarda o caminho inteiro do bruto. Mover (por exemplo, tirar do
    OneDrive) pede apagar `sequencia/decupagem` e decupar de novo.
 

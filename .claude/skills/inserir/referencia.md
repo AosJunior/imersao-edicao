@@ -6,7 +6,6 @@ prender cada efeito à peça.
 
 ```json
 {
-  "cabeca_y": 430,
   "camadas": [ ... ],
   "legenda": {"destaques": [], "nomes": [], "correcoes": {}, "apagar": [], "esconder": []},
   "estilo": {}
@@ -30,23 +29,24 @@ Todo `de`, `ate` e `em` aceita:
 maiúscula ou pontuação. Número falado como palavra de âncora leva `#`: `"F4:4#1"` é a palavra "4"; `"F4:4"` é a 4ª
 palavra. Âncora numa palavra que o corte tirou é erro, com o nome da palavra.
 
-## cabeca_y
+## Onde as peças pousam (o script decide)
 
-O topo do cabelo, em px, no quadro 1080×1920 (0 é o topo da tela). As peças ficam entre a zona segura (y 260, onde
-o Instagram põe o nome do perfil) e 50 px acima do cabelo, e encolhem para caber. Cada tipo cabe acima da cabeça a
-partir de um `cabeca_y` mínimo:
+O `motion.py` procura o rosto nos instantes de cada peça (`rosto.py`, guardado em `insercoes/.rosto.json`) e trata
+a caixa do rosto, com margem, como zona proibida. Para cada peça, nesta ordem:
 
-| Tipo | `cabeca_y` a partir de |
-|---|---|
-| balão | 400 |
-| gancho | 440 |
-| número | 510 |
-| gráfico | 540 |
-| etapas | 560 |
+1. **Em cima da cabeça**, se a peça inteira cabe entre a área segura (y 260) e o topo do cabelo, no tamanho de
+   desenho ou até 12 % menor.
+2. **Afasta o vídeo**: o quadro encolhe preso à base (até 68 %), com transição suave antes de a peça entrar, e volta
+   depois que ela sai. A peça ocupa a faixa que abriu em cima. Peças vizinhas dividem o mesmo afastamento.
+3. **Abaixo do rosto**, entre o queixo e o fim da área segura (y 1600); ou **ao lado**, se couber.
 
-Abaixo disso a peça desce para o peito (pé em y 1520) e a legenda some enquanto ela está na tela. `"y"` numa
-camada fixa o pé da peça à mão, em px: serve para descer mais uma peça que desceu e ainda pega o queixo
-(`"y": 1580`), ou para ajustar a altura de uma que está em cima.
+A peça nunca encolhe abaixo do tamanho legível. Se nada disso couber, ela sai contornada de vermelho no storyboard
+e o `--video` não grava. A legenda fica abaixo do queixo (desce junto quando o vídeo se afasta) e some no instante
+em que cairia em cima do rosto ou de uma peça.
+
+- `"rosto": [x, y, largura, altura]` no plano: a caixa do rosto medida à mão (px do quadro 1080×1920), para quando
+  o script não acha o rosto.
+- `"y"` numa camada: fixa o pé da peça à mão. A trava do rosto continua valendo.
 
 ## camadas
 
@@ -88,7 +88,7 @@ O padrão é o do `marca/estilo.md` e já está no script. Para um vídeo espec�
 | `tamanho` | 80 | tamanho da legenda, em px |
 | `palavras_max` | 4 | palavras por vez (1 a 4) |
 | `letras_max` | 22 | letras por linha de legenda |
-| `legenda_y` | 1290 | pé das letras da legenda |
+| `legenda_y` | 1290 | pé das letras da legenda (o script desce se o queixo estiver mais baixo) |
 | `cor`, `cor_destaque` | `#FFFFFF`, `#FFD23F` | texto e destaque |
 | `sombra` | 0.6 | força da sombra do texto, de 0 a 1 |
 | `escala_destaque` | 1.3 | tamanho da palavra de destaque em relação à legenda |

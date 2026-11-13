@@ -8,8 +8,14 @@ description: Passo 3 da imersão de edição de vídeo. Põe no vídeo já corta
 A pessoa já tem o vídeo cortado e com cor (`sequencia/2-cor.mp4`). Você planeja as peças, mostra o **storyboard**
 (uma imagem parada de cada peça), espera o sim e só então anima e entrega `sequencia/3-insercoes.mp4`.
 
-O escopo é fixo: **o gancho**, **até 2 inserções** que a fala pede e **a legenda**. Tudo fica acima da cabeça ou
-abaixo do rosto, nunca em cima dele. A animação é HyperFrames + GSAP, e quem monta a página é o script.
+O escopo é fixo: **o gancho**, **até 2 inserções** que a fala pede e **a legenda**. A animação é HyperFrames +
+GSAP, e quem monta a página é o script.
+
+**O rosto é zona proibida.** O script acha o rosto nos instantes de cada peça e decide sozinho onde ela pousa: em
+cima da cabeça quando há altura livre para a peça inteira; sem espaço, ele afasta o vídeo (o quadro encolhe um
+pouco, preso à base, e a peça ocupa a faixa de cima); se nem assim couber, a peça vai para baixo do rosto ou para o
+lado. A legenda fica abaixo do queixo. Peça que tocaria o rosto sai contornada de vermelho no storyboard e o script
+se recusa a gravar o vídeo.
 
 Rode a partir da pasta da imersão. A saudação do primeiro uso e o jeito de falar estão no `CLAUDE.md` da pasta.
 Sem `sequencia/2-cor.mp4`, falta o passo 2: diga isso e ofereça o `/cor`.
@@ -23,17 +29,15 @@ Se `sequencia/insercoes/insercoes.json` já existe, é uma correção: vá ao pa
 - `sequencia/decupagem/palavras-corte.json`: as frases que ficaram (`frases`, com o id `F<n>`) e o tempo de cada
   palavra no vídeo cortado. Os tempos do plano são **âncoras na fala**: `"F3:cabeça"` é a palavra "cabeça" da F3.
 - `marca/estilo.md`: as regras das peças e da legenda.
-- Onde começa a cabeça:
+- O enquadramento:
 
   ```
   uv run .claude/skills/inserir/scripts/motion.py "videos/<pasta>" --quadros
   ```
 
-  Abra os 3 quadros (Read). Em cada um, ache o y do topo do cabelo; fique com o **menor** dos três (a cabeça no
-  ponto mais alto da tela) e multiplique por 2: é o `cabeca_y` do plano (os quadros têm 540×960; o vídeo,
-  1080×1920).
+  Abra os 3 quadros (Read) para saber como a pessoa está enquadrada. A posição do rosto o script mede sozinho.
 
-Pronto quando você sabe em que palavra entra cada peça e o `cabeca_y`.
+Pronto quando você sabe em que palavra entra cada peça.
 
 ## 2. Escrever o plano
 
@@ -42,7 +46,6 @@ de escrever o primeiro. Para o vídeo do roteiro:
 
 ```json
 {
-  "cabeca_y": 430,
   "camadas": [
     {"id": "gancho", "tipo": "gancho", "texto": "Meu primeiro vídeo editado com *IA*", "de": 0, "ate": "F1:fim+0.2"},
     {"id": "titulo", "tipo": "balao", "texto": "editado com *Claude Code*", "de": "F3:cima", "ate": "F3:fim+0.3"},
@@ -73,8 +76,10 @@ Confira sem desenhar nada:
 uv run .claude/skills/inserir/scripts/motion.py "videos/<pasta>" --resumo
 ```
 
-Pronto quando ele lista as peças sem erro. "vai para baixo do rosto" quer dizer que não há espaço livre acima da
-cabeça para aquela peça: ela desce para o peito e a legenda some enquanto ela está na tela.
+Na primeira vez ele procura o rosto (uns 15 s; na primeira vez do computador instala o detector, uns 50 MB).
+Pronto quando ele lista as peças sem erro, cada uma com a faixa do rosto ("rosto de y … a …"). Se ele disser que
+não achou o rosto, meça a caixa do rosto num dos quadros (da testa ao queixo, de uma orelha à outra), multiplique
+por 2 e ponha no plano: `"rosto": [x, y, largura, altura]`.
 
 ## 3. Storyboard
 
@@ -89,8 +94,9 @@ Ele grava `sequencia/insercoes/storyboard.jpg`, com um quadro numerado por peça
 abre a folha no computador da pessoa. Abra você também (Read) e confira, peça por peça:
 
 - o texto está certo, com acento;
-- nada cobre o rosto. Peça de cima pegando o cabelo: diminua o `cabeca_y`. Peça que desceu para o peito e pega o
-  queixo: ponha `"y": 1580` nela (o pé da peça, em px) ou encurte o texto;
+- nada toca o rosto, em nenhum quadro. A saída diz onde cada peça pousou ("acima da cabeça", "com o vídeo
+  afastado para 74 %", "abaixo do rosto"). Contorno vermelho ou "ATENÇÃO … cobre o rosto": encurte o texto da
+  peça ou troque o tipo, e rode de novo;
 - dá para ler em 1 segundo.
 
 Leia também a `sequencia/insercoes/legenda-curta.srt` inteira (o storyboard mostra só duas legendas): palavra
@@ -121,7 +127,7 @@ Diga em uma linha onde está o arquivo e que ainda falta o som. O próximo passo
 
 Edite só o que a pessoa pediu no `insercoes.json`, mostre o storyboard de novo (passo 3) e, com o sim, anime de novo
 (passo 4). Pedidos comuns: outro texto, a peça em outra palavra (`de`, `ate`), o título mais para um lado
-(`"lado": "esquerda"`), outra palavra de destaque, a peça mais para cima ou para baixo (`"y"`).
+(`"lado": "esquerda"`), outra palavra de destaque. A altura das peças é do script: ele as mantém fora do rosto.
 
 ## Quando falha
 

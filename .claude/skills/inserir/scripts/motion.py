@@ -9,6 +9,10 @@ Uso:  uv run "<skill>/scripts/motion.py" ["<pasta do vídeo>"] --resumo       s�
       uv run "<skill>/scripts/motion.py" ["<pasta do vídeo>"] --video        anima, grava sequencia/3-insercoes.mp4 e abre
 Sem a pasta, vale a do único vídeo que estiver em videos/*/brutos/.
 
+O rosto é zona proibida: o script acha o rosto (rosto.py) nos instantes de cada peça e decide onde ela pousa (em cima
+da cabeça; sem espaço, afasta o vídeo; senão abaixo ou ao lado do rosto). Peça que tocaria o rosto: o --storyboard
+acusa em vermelho e sai com código 2, e o --video não grava.
+
 Lê  <pasta do vídeo>/sequencia/insercoes/insercoes.json (o plano, que o Claude escreve; formato no referencia.md),
     sequencia/decupagem/final.mp4 (já com a cor do /cor) e palavras-corte.json, e as fontes de marca/fontes/.
 Grava em <pasta do vídeo>/sequencia/:
@@ -40,7 +44,9 @@ HYPERFRAMES = "hyperframes@0.9.26"
 GSAP = "https://cdn.jsdelivr.net/npm/gsap@3.15.0/dist/gsap.min.js"
 W, H = 1080, 1920
 TIPOS = ("gancho", "balao", "numero", "etapas", "grafico", "html")
-PRECISA = {"gancho": 130, "balao": 90, "numero": 200, "etapas": 250, "grafico": 230, "html": 200}  # px livres entre a zona segura e a cabeça
+# margens da zona proibida, em fração da caixa do detector (que vai da testa ao queixo, de orelha a orelha)
+ROSTO_CIMA, ROSTO_BAIXO, ROSTO_LADO = 0.15, 0.12, 0.08    # o rosto: nenhuma peça pode tocar (trava)
+CABELO = 0.5                                                # acima da caixa: até onde vai o cabelo
 FPS_OK = {"24/1": "24", "25/1": "25", "30/1": "30", "50/1": "50", "60/1": "60",
           "24000/1001": "24000/1001", "30000/1001": "30000/1001", "60000/1001": "60000/1001"}
 UNIDADES = {"mil", "milhao", "milhoes", "bilhao", "bilhoes", "reais", "real", "anos", "ano", "dias", "dia",
@@ -168,10 +174,6 @@ def resolver(pasta, plano):
     est = dict(ESTILO)
     est.update(plano.get("estilo") or {})
     zs = est["zona_segura"]
-    cabeca = float(plano.get("cabeca_y", 500))
-    espaco = cabeca - 50 - zs[0]
-    if not 200 <= cabeca <= 1500:
-        erros.append(f"cabeca_y {cabeca:g}: é o topo do cabelo em px no quadro 1080×1920 (0 = topo). Meça num quadro.")
 
     def T(v, fim, onde):
         try:
@@ -199,10 +201,8 @@ def resolver(pasta, plano):
             continue
         if ate - de > 8 and tipo != "gancho":
             avisos.append(f"{cid}: {ate - de:.1f} s na tela é muito; peça fica de 1,5 a 6 s.")
-        em_cima = espaco >= PRECISA[tipo] or c.get("y") is not None
-        d = {"id": cid, "tipo": tipo, "de": round(de, 3), "ate": round(ate, 3), "em_cima": em_cima,
-             "alto": max(90, espaco) if em_cima else 520,
-             "legenda": "some" if not em_cima else c.get("legenda") or ("fica" if tipo == "balao" else "some")}
+        d = {"id": cid, "tipo": tipo, "de": round(de, 3), "ate": round(ate, 3),
+             "legenda": c.get("legenda") or ("fica" if tipo == "balao" else "some")}
         if c.get("y") is not None:
             d["y"] = float(c["y"])
         if tipo in ("gancho", "balao"):
@@ -255,6 +255,19 @@ def resolver(pasta, plano):
         if b["de"] < a["ate"] - 0.01:
             erros.append(f"as peças «{a['id']}» e «{b['id']}» estão na tela ao mesmo tempo "
                          f"({fmt_t(b['de'])} a {fmt_t(a['ate'])}): encurte uma ou mova a outra")
+
+    # ---- onde está o rosto em cada peça (zona proibida) e no vídeo todo (para a legenda)
+    amostras = rostos(pasta, video, dur, camadas, plano, avisos, erros)
+    todas = [cx for _, cx in amostras]
+    for c in camadas:
+        perto = [cx for t, cx in amostras if c["de"] - 0.45 <= t <= c["ate"] + 0.1] or todas
+        if perto:
+            c["f"], c["z"] = zona(perto), zona(perto, cabelo=True)
+    geral = None
+    if todas:
+        baixos = sorted(cx[1] + cx[3] * (1 + ROSTO_BAIXO) for cx in todas)
+        geral = {"baixo": round(baixos[min(len(baixos) - 1, int(len(baixos) * 0.85))]),
+                 "amostras": [[round(t, 2)] + zona([cx]) for t, cx in amostras]}
 
     # ---- legenda
     lg = plano.get("legenda") or {}
@@ -345,8 +358,71 @@ def resolver(pasta, plano):
     ndest = sum(1 for x in legenda if x["d"])
     if erros:
         sair("O plano tem erro:\n- " + "\n- ".join(erros), 2)
-    return {"video": video, "dur": dur, "estilo": est, "zona": zs, "cabeca": cabeca, "camadas": camadas,
+    return {"video": video, "dur": dur, "estilo": est, "zona": zs, "rosto": geral, "camadas": camadas,
             "legenda": legenda, "avisos": avisos, "ndest": ndest, "fps": sondar(video)["fps"]}
+
+
+def zona(caixas, cabelo=False):
+    """União das caixas do detector com a margem do rosto (ou até o topo do cabelo): [x0, y0, x1, y1]."""
+    cima = CABELO if cabelo else ROSTO_CIMA
+    return [round(max(0, min(x - w * ROSTO_LADO for x, y, w, h in caixas))),
+            round(max(0, min(y - h * cima for x, y, w, h in caixas))),
+            round(min(W, max(x + w * (1 + ROSTO_LADO) for x, y, w, h in caixas))),
+            round(min(H, max(y + h * (1 + ROSTO_BAIXO) for x, y, w, h in caixas)))]
+
+
+def rostos(pasta, video, dur, camadas, plano, avisos, erros):
+    """[(tempo, [x, y, l, a])]: a caixa do rosto nos instantes de cada peça e ao longo do vídeo.
+    Medida pelo rosto.py (guardada em insercoes/.rosto.json). Se o plano traz "rosto": [x, y, l, a], vale ele."""
+    manual = plano.get("rosto")
+    if manual is not None:
+        try:
+            x, y, w, h = [float(v) for v in manual]
+            if w < 60 or h < 60:
+                raise ValueError
+            return [(dur / 2, [x, y, w, h])]
+        except (TypeError, ValueError):
+            erros.append("\"rosto\": é [x, y, largura, altura] da testa ao queixo e de uma orelha à outra, em px do "
+                         "quadro 1080×1920")
+            return []
+    tempos = {round(dur * (k + 0.5) / 10, 2) for k in range(10)}
+    for c in camadas:
+        n = max(3, min(8, int((c["ate"] - c["de"]) / 0.5) + 1))
+        tempos |= {round(min(dur - 0.05, max(0.0, c["de"] - 0.3 + (c["ate"] - c["de"] + 0.3) * k / (n - 1))), 2) for k in range(n)}
+    tempos = sorted(tempos)
+    st = video.stat()
+    chave_cache = {"tamanho": st.st_size, "mtime": int(st.st_mtime)}
+    cache = pasta / "sequencia" / "insercoes" / ".rosto.json"
+    medido = {}
+    if cache.is_file():
+        try:
+            d = json.loads(cache.read_text(encoding="utf-8"))
+            if d.get("video") == chave_cache:
+                medido = d.get("rostos") or {}
+        except Exception:
+            medido = {}
+    faltam = [t for t in tempos if f"{t:.2f}" not in medido]
+    if faltam:
+        uv = shutil.which("uv")
+        if uv:
+            print(f"Procurando o rosto em {len(faltam)} quadros (na primeira vez instala o detector, uns 50 MB)...", flush=True)
+            r = subprocess.run([uv, "run", str(Path(__file__).resolve().parent / "rosto.py"), str(video),
+                                ",".join(f"{t:.2f}" for t in faltam)], capture_output=True, text=True, encoding="utf-8",
+                               errors="replace")
+            try:
+                medido.update(json.loads((r.stdout or "").strip().splitlines()[-1])["rostos"])
+                cache.parent.mkdir(parents=True, exist_ok=True)
+                cache.write_text(json.dumps({"video": chave_cache, "rostos": medido}) + "\n", encoding="utf-8")
+            except Exception:
+                avisos.append("o detector de rosto não rodou: " + ((r.stderr or r.stdout or "").strip().splitlines() or ["sem saída"])[-1][:160])
+    achados = [(t, medido[f"{t:.2f}"]) for t in tempos if medido.get(f"{t:.2f}")]
+    if not achados:
+        erros.append("não achei o rosto no vídeo. Rode com --quadros, abra um quadro (Read), meça a caixa do rosto "
+                     "(da testa ao queixo, de uma orelha à outra), multiplique por 2 e ponha no plano: "
+                     "\"rosto\": [x, y, largura, altura]")
+    elif len(achados) < len(tempos) * 0.5:
+        avisos.append(f"o rosto só apareceu em {len(achados)} de {len(tempos)} quadros; confira o storyboard com atenção.")
+    return achados
 
 
 def sondar(video):
@@ -393,7 +469,8 @@ def montar(pasta, dados):
         else:
             dados["avisos"].append(f"fonte «{c or campo}» não encontrada: a peça sai na fonte do sistema.")
     modelo = (Path(__file__).resolve().parent.parent / "modelos" / "motion.html").read_text(encoding="utf-8")
-    pagina = {"dur": round(dados["dur"], 3), "cabeca": dados["cabeca"], "zona": dados["zona"], "estilo": est,
+    pagina = {"dur": round(dados["dur"], 3), "rosto": dados["rosto"], "zona": dados["zona"], "estilo": est,
+              "debug": "--ver-rosto" in sys.argv, "travar": "--video" in sys.argv,
               "camadas": dados["camadas"], "legenda": [{k: x[k] for k in ("a", "b", "t", "d")} for x in dados["legenda"]]}
     css_livre = "\n".join(c.get("css", "") for c in dados["camadas"] if c["tipo"] == "html")
     saida = (modelo.replace("/*FONTES*/", "\n      ".join(faces)).replace("/*CSS_LIVRE*/", css_livre)
@@ -419,8 +496,7 @@ def apices(dados):
     for c in dados["camadas"]:
         folga = 1.25 if c["tipo"] in ("numero", "grafico") else 0.7
         t = c["itens"][-1]["t"] + 0.45 if c["tipo"] == "etapas" else c["de"] + folga
-        onde = "" if c["em_cima"] else " (sem espaço acima da cabeça: foi para baixo do rosto)"
-        out.append((min(t, c["ate"] - 0.25), f"{c['tipo']} «{c['id']}»{onde}"))
+        out.append((min(t, c["ate"] - 0.25), f"{c['tipo']} «{c['id']}»{c.get('onde', '')}"))
     comum = next((x for x in dados["legenda"] if not x["d"]), None)
     forte = next((x for x in dados["legenda"] if x["d"]), None)
     if comum:
@@ -431,13 +507,65 @@ def apices(dados):
 
 
 def resumo(dados):
-    print(f"Vídeo: {dados['video'].name} · {dados['dur']:.1f} s · topo da cabeça em y {dados['cabeca']:g}")
+    print(f"Vídeo: {dados['video'].name} · {dados['dur']:.1f} s")
     for c in dados["camadas"]:
+        f = c.get("f")
         print(f"  {fmt_t(c['de'])} → {fmt_t(c['ate'])}  {c['tipo']:<8} «{c['id']}»  legenda {c['legenda']}"
-              + ("" if c["em_cima"] else "  · vai para baixo do rosto (falta espaço acima da cabeça)"))
+              + (f"  · rosto de y {f[1]} a {f[3]}" if f else ""))
     print(f"Legenda: {len(dados['legenda'])} grupos, {dados['ndest']} com palavra de destaque")
     for a in dados["avisos"]:
         print(f"Aviso: {a}")
+
+
+MODOS = {"cima": "acima da cabeça", "afasta": "acima da cabeça, com o vídeo afastado para {e} %",
+         "baixo": "abaixo do rosto", "lado": "ao lado do rosto", "fixo": "na altura pedida no plano (\"y\")"}
+
+
+def conferir(proj, dados):
+    """A trava: abre a página no navegador do HyperFrames, lê onde cada peça pousou e confere, por conta própria,
+    que nenhuma toca a caixa do rosto. Devolve a lista de peças que tocam (vazia = pode renderizar)."""
+    cod, out = npx(["browser", "path"], limite=600)
+    chrome = next((x.strip() for x in reversed(out.strip().splitlines()) if x.strip() and Path(x.strip()).is_file()), None)
+    if cod != 0 or not chrome:
+        print("Aviso: não consegui abrir o navegador para conferir as peças contra o rosto.")
+        return None
+    try:
+        r = subprocess.run([chrome, "--headless", "--disable-gpu", "--hide-scrollbars", "--window-size=1080,1920",
+                            "--allow-file-access-from-files", "--virtual-time-budget=6000", "--dump-dom",
+                            (proj / "index.html").resolve().as_uri()], capture_output=True, text=True, encoding="utf-8",
+                           errors="replace", timeout=120)
+    except Exception as e:  # noqa: BLE001
+        print(f"Aviso: a conferência das peças contra o rosto não rodou ({e}).")
+        return None
+    dom = r.stdout or ""
+    if 'data-pronto="1"' not in dom:
+        print("Aviso: a página não terminou de se arrumar na conferência (sem internet para o GSAP?).")
+        return None
+    ruins = []
+    por_id = {c["id"]: c for c in dados["camadas"]}
+    for m in re.finditer(r'<div[^>]*data-peca="([^"]+)"[^>]*>', dom):
+        tag = m.group(0)
+        def campo(nome):
+            x = re.search(nome + r'="([^"]*)"', tag)
+            return x.group(1) if x else ""
+        c = por_id.get(m.group(1))
+        if not c:
+            continue
+        caixa = [float(v) for v in campo("data-caixa").split(",")] if campo("data-caixa") else None
+        rosto = [float(v) for v in campo("data-rosto").split(",")] if campo("data-rosto") else None
+        modo, esc = campo("data-modo"), campo("data-escala")
+        c["onde"] = " · " + MODOS.get(modo, modo).format(e=round(float(esc or 1) * 100))
+        toca = bool(caixa and rosto and caixa[0] < rosto[2] and caixa[2] > rosto[0] and caixa[1] < rosto[3] and caixa[3] > rosto[1])
+        fora = bool(caixa and (caixa[1] < dados["zona"][0] - 1 or caixa[3] > dados["zona"][1] + 1 or caixa[0] < 0 or caixa[2] > W))
+        if toca or campo("data-ok") != "1":
+            ruins.append(f"«{c['id']}» cobre o rosto (peça em y {caixa[1]:.0f}–{caixa[3]:.0f}, rosto em y {rosto[1]:.0f}–{rosto[3]:.0f})"
+                         if caixa and rosto else f"«{c['id']}» não coube sem tocar o rosto")
+        elif fora:
+            ruins.append(f"«{c['id']}» sai da área segura do Instagram (y {caixa[1]:.0f}–{caixa[3]:.0f})")
+    ocultas = len(re.findall(r'data-oculta="1"', dom))
+    if ocultas:
+        print(f"Legenda: {ocultas} grupo(s) escondido(s) porque cairiam em cima do rosto ou de uma peça.")
+    return ruins
 
 
 def checar(proj):
@@ -450,7 +578,7 @@ def checar(proj):
 
 
 def quadros(pasta):
-    """Três quadros do vídeo cortado, em 540×960, para medir onde começa a cabeça (y do quadro × 2 = cabeca_y)."""
+    """Três quadros do vídeo cortado, em 540×960, para ver o enquadramento (px do quadro × 2 = px do vídeo)."""
     video = pasta / "sequencia" / "decupagem" / "final.mp4"
     if not video.is_file():
         sair(f"Falta o vídeo {video}. Ele nasce no /decupar (passo 1) e ganha a cor no /cor (passo 2).")
@@ -490,6 +618,7 @@ def main():
     if "--storyboard" in sys.argv:
         t0 = time.time()
         checar(proj)
+        ruins = conferir(proj, dados)
         pts = apices(dados)
         if not pts:
             sair("O plano não tem peça nem legenda para mostrar.")
@@ -508,11 +637,24 @@ def main():
         for n, (t, rot) in enumerate(pts, 1):
             print(f"  {n}. {fmt_t(t)}  {rot}")
         print("Cada quadro em tamanho cheio: " + str(sb))
+        if ruins:
+            print("ATENÇÃO, o vídeo NÃO será gravado assim (a peça aparece contornada de vermelho no storyboard):\n- "
+                  + "\n- ".join(ruins) + "\nEncurte o texto da peça, troque o tipo ou fixe a altura com \"y\".")
+            sys.exit(2)
         return
     if "--video" in sys.argv:
         t0 = time.time()
         if not checar(proj):
             print("Seguindo mesmo assim; confira o vídeo.")
+        ruins = conferir(proj, dados)
+        if ruins is None:
+            ruins = conferir(proj, dados)        # uma segunda tentativa (máquina ocupada)
+        if ruins is None:
+            print("Aviso: a conferência contra o rosto não rodou. As peças foram postas fora do rosto pela página, e "
+                  "peça que tocaria o rosto fica de fora do vídeo. Confira o resultado.")
+        if ruins:
+            sair("O vídeo não foi gravado: há peça em cima do rosto.\n- " + "\n- ".join(ruins)
+                 + "\nEncurte o texto da peça, troque o tipo ou fixe a altura com \"y\", e veja o storyboard de novo.", 2)
         saida = ins / "final-insercoes.mp4"
         tmp = "final-insercoes.parcial.mp4"
         a = ["render", "-o", tmp, "--fps", FPS_OK.get(dados["fps"], "30"), "--crf", "18", "--quiet"]
