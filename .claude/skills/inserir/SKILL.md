@@ -29,8 +29,9 @@ Se `sequencia/insercoes/insercoes.json` já existe, é uma correção: vá ao pa
   uv run .claude/skills/inserir/scripts/motion.py "videos/<pasta>" --quadros
   ```
 
-  Abra os 3 quadros (Read). Ache a linha do topo do cabelo no quadro em que ela está mais alta e multiplique por 2:
-  é o `cabeca_y` do plano (os quadros têm 540×960; o vídeo, 1080×1920).
+  Abra os 3 quadros (Read). Em cada um, ache o y do topo do cabelo; fique com o **menor** dos três (a cabeça no
+  ponto mais alto da tela) e multiplique por 2: é o `cabeca_y` do plano (os quadros têm 540×960; o vídeo,
+  1080×1920).
 
 Pronto quando você sabe em que palavra entra cada peça e o `cabeca_y`.
 
@@ -54,7 +55,9 @@ de escrever o primeiro. Para o vídeo do roteiro:
 }
 ```
 
-Os ids `F<n>` e as palavras vêm do `palavras-corte.json` deste vídeo: confira cada âncora nele.
+Os `F<n>` deste exemplo são ilustrativos. No vídeo da pessoa a numeração é a do bruto e pula as frases que o
+corte tirou: ache cada frase **pelo texto** no campo `frases` do `palavras-corte.json` e use o id que estiver lá
+("Frase 3" do roteiro é a terceira do texto, não a `F3`).
 
 Réguas:
 
@@ -86,8 +89,12 @@ Ele grava `sequencia/insercoes/storyboard.jpg`, com um quadro numerado por peça
 abre a folha no computador da pessoa. Abra você também (Read) e confira, peça por peça:
 
 - o texto está certo, com acento;
-- nada cobre o rosto (se cobre, acerte o `cabeca_y` e rode de novo);
+- nada cobre o rosto. Peça de cima pegando o cabelo: diminua o `cabeca_y`. Peça que desceu para o peito e pega o
+  queixo: ponha `"y": 1580` nela (o pé da peça, em px) ou encurte o texto;
 - dá para ler em 1 segundo.
+
+Leia também a `sequencia/insercoes/legenda-curta.srt` inteira (o storyboard mostra só duas legendas): palavra
+ouvida errado vai em `correcoes`; palavra que a pessoa não disse vai em `apagar`.
 
 Mande no chat uma linha por imagem (número, o que aparece, em que palavra entra) e uma pergunta: "Aprovado? Se
 quiser mudar, diga o número da imagem e o que muda."

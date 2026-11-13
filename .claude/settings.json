@@ -2,11 +2,15 @@
   "permissions": {
     "defaultMode": "acceptEdits",
     "allow": [
-      "Bash(uv run .claude/skills/:*)",
+      "Bash(uv run .claude/skills/*)",
       "Bash(uv --version)",
       "Bash(ffmpeg -version)",
       "Bash(node --version)",
-      "Bash(brew --version)"
+      "Bash(brew --version)",
+      "PowerShell(uv run .claude/skills/*)",
+      "PowerShell(uv --version)",
+      "PowerShell(ffmpeg -version)",
+      "PowerShell(node --version)"
     ]
   }
 }

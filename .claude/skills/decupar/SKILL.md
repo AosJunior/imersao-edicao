@@ -21,10 +21,16 @@ uv --version
 node --version
 ```
 
-Os três respondem com a versão: siga para o passo 2.
+Com os três respondendo, veja o que ainda falta baixar:
 
-**Falta algum, ou é a primeira vez nesta pasta** (você acabou de fazer a saudação): avise antes de qualquer download,
-com estas informações, e espere o sim:
+```
+uv run .claude/skills/decupar/scripts/preparar.py --conferir
+```
+
+Tudo "ok": siga para o passo 2, sem perguntar nada.
+
+**Falta um programa, ou o `--conferir` mostra "FALTA"**: avise antes de qualquer download, com estas informações, e
+espere o sim:
 
 - vai instalar o que edita o vídeo (FFmpeg), o que roda as skills (uv e Node) e baixar o que transcreve a fala
   (Whisper) e o que anima as inserções (HyperFrames);
@@ -36,19 +42,21 @@ Com o sim ("Pode instalar."):
 - **Mac**: `brew install ffmpeg uv node` (só o que faltar). Sem o `brew` (`brew --version` não responde), quem
   instala o Homebrew é a pessoa, porque ele pede a senha do Mac: ela abre o app Terminal, cola o comando da página
   brew.sh, digita a senha (não aparece nada enquanto digita) e avisa quando terminar. Depois rode o `brew install`.
-- **Windows**: `winget install --accept-source-agreements --accept-package-agreements Gyan.FFmpeg astral-sh.uv OpenJS.NodeJS.LTS`
-  (só o que faltar). O Windows só enxerga programa novo numa janela nova: peça para ela fechar o Claude, abrir de
-  novo na mesma pasta e mandar `/decupar` outra vez.
+- **Windows**: um comando por programa que faltar, trocando `<id>` por `Gyan.FFmpeg`, `astral-sh.uv` ou
+  `OpenJS.NodeJS.LTS`:
+  `winget install -e --id <id> --source winget --accept-source-agreements --accept-package-agreements`.
+  O Node abre uma janela do Windows pedindo permissão: ela clica em Sim. O Windows só enxerga programa novo depois
+  que o Claude fecha por completo: peça para ela sair do Claude (botão direito no ícone do Claude ao lado do
+  relógio › Sair), abrir de novo na mesma pasta e mandar `/decupar` outra vez. Se os comandos ainda não
+  responderem, reiniciar o computador resolve.
 
-Pronto quando os três comandos respondem com a versão.
+Se os três programas já respondiam e só faltavam os downloads, não há o que instalar: eles baixam no passo 3.
+
+Pronto quando os três comandos respondem com a versão e o `preparar.py --conferir` rodou.
 
 ## 2. Achar o vídeo
 
-```
-uv run .claude/skills/decupar/scripts/preparar.py --conferir
-```
-
-A última linha lista os vídeos em `videos/*/brutos/`.
+A última linha do `preparar.py --conferir` lista os vídeos em `videos/*/brutos/`.
 
 - **Um vídeo**: é ele (mesmo que a pessoa só tenha mandado `/decupar`).
 - **Mais de um**: pergunte qual, pelo nome da pasta.
@@ -85,9 +93,11 @@ vídeo for o do roteiro: ele diz o que a pessoa quis falar.
 Resolva antes cada **pista** que a transcrição imprimiu:
 
 - **voz sem texto**: o Whisper costuma pular justamente a frase repetida. Escute o pedaço:
-  `uv run .claude/skills/decupar/scripts/transcrever.py "<vídeo>" --ouvir 00:08,2 00:11,6`. Se aparecer fala que
+  `uv run .claude/skills/decupar/scripts/transcrever.py "<vídeo>" --ouvir "00:08,2" "00:11,6"` (os tempos entre
+  aspas: no Windows a vírgula solta parte o tempo em dois). Se aparecer fala que
   faltava, repita o comando com `--trocar` no fim: a transcrição é corrigida e as frases, renumeradas.
-- **possível parte gravada de novo**: confirme lendo as duas frases.
+- **possível retake** (parte gravada de novo): confirme lendo as duas frases.
+- **cai em silêncio**: o Whisper inventou a frase; ela fica fora dos trechos.
 
 Depois, frase por frase:
 
@@ -142,17 +152,25 @@ Diga em uma linha onde está o arquivo e que o vídeo abriu para ela assistir co
 
 ## 6. Corrigir
 
-A pessoa aponta o defeito pelo segundo do vídeo cortado ("No segundo 8, sobrou uma pausa"). O `--resumo` do passo 4
-mostra qual frase está nesse segundo. Mude só o que ela pediu no `cortes.json` e rode o `entregar.py` de novo:
+A pessoa aponta o defeito pelo segundo do vídeo cortado ("No segundo 8, sobrou uma pausa"). O
+`sequencia/decupagem/palavras-corte.json` tem cada palavra com o tempo no vídeo cortado (`a` começa, `b` termina):
+a pausa é o vão entre o `b` de uma palavra e o `a` da seguinte, perto desse segundo. Mude só o que ela pediu no
+`cortes.json`, confira com o `--resumo` e rode o `entregar.py` de novo:
 
 | Pedido | O que mudar |
 |---|---|
-| "Sobrou uma pausa" | divida o trecho em dois na pausa, ou desça `pausa_max` para 0.18 |
+| "Sobrou uma pausa" | divida o trecho entre as duas palavras da pausa (`"ate": "F5:cabeça"` num, `"de": "F5:foi"` no seguinte) e aperte as duas bordas: `"ajustes": {"T2.ate": -0.2, "T3.de": 0.2}` (os números dos dois trechos novos). O `--resumo` tem de mostrar o vídeo mais curto; cada 0,1 a mais tira 0,1 s. Pare antes de comer a palavra |
 | "Ficou corrido", "cortou o fim da palavra" | `"ajustes": {"T2.ate": 0.08}` termina o 2º trecho 0,08 s depois (`T2.de` mexe no começo); ou suba `pausa_max` para 0.35 |
 | "Tira a frase sobre X" | divida o trecho em volta dela |
 | "Mantém a frase sobre X" | devolva a frase ao trecho |
 
 Se o vídeo já passou pelo `/cor`, o `entregar.py` percebe e atualiza o `2-cor.mp4` com o corte novo.
+
+## Quando falha
+
+Erro de instalação ou de download que não se resolve rodando o mesmo comando mais uma vez: mostre à pessoa a
+mensagem exata, em uma linha, e peça para ela escrever `TRAVEI` no chat da aula com uma foto da tela. Enquanto
+isso ela acompanha pela pasta `videos/exemplo`.
 
 ## Limites
 

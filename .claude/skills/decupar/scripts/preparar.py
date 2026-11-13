@@ -66,7 +66,8 @@ def main():
                             str(teste)], capture_output=True)
             r = subprocess.run([shutil.which("uv"), "run", str(AQUI / "transcrever.py"), str(teste)], capture_output=True,
                                text=True, encoding="utf-8", errors="replace")
-            ok = r.returncode == 0
+            saida = (r.stdout or "") + (r.stderr or "")
+            ok = r.returncode == 0 or "fala" in saida.lower()   # o teste não tem fala: "não achou fala" também é modelo baixado
             print(f"{'ok   ' if ok else 'FALHA'} Whisper ({time.time() - t0:.0f} s)")
             if not ok:
                 print("\n".join(((r.stdout or "") + (r.stderr or "")).strip().splitlines()[-6:]))
@@ -85,6 +86,12 @@ def main():
             print(f"{'ok   ' if ok else 'FALHA'} HyperFrames ({time.time() - t1:.0f} s)"
                   + ("" if ok else " · ele tenta de novo no /inserir"))
 
+    hub = Path(os.environ.get("HF_HOME") or Path.home() / ".cache" / "huggingface") / "hub"
+    whisper = hub.is_dir() and any(hub.glob("models--*whisper-large-v3-turbo*"))
+    hf = Path.home() / ".cache" / "hyperframes" / "chrome"
+    motion = hf.is_dir() and any(hf.iterdir())
+    print(f"{'ok   ' if whisper else 'FALTA'} Whisper: " + ("já baixado" if whisper else "baixa cerca de 2 GB na primeira transcrição"))
+    print(f"{'ok   ' if motion else 'FALTA'} HyperFrames: " + ("já baixado" if motion else "baixa uns 500 MB antes das inserções"))
     vs = brutos_com_video(raiz)
     if vs:
         print("Vídeo(s) em brutos: " + " · ".join(str(v.relative_to(raiz)) for v in vs))

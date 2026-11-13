@@ -37,8 +37,8 @@ Com o sim ("Pode aplicar."):
 uv run .claude/skills/cor/scripts/aplicar.py "videos/<pasta>" --aplicar
 ```
 
-Ele refaz o vídeo cortado com a cor ligada (uns 15 s por minuto de vídeo no Mac; 1 a 2 min por minuto no Windows),
-copia para `sequencia/2-cor.mp4` e abre. Pronto quando imprime "Pronto: … 2-cor.mp4 · com cor".
+Ele refaz o vídeo cortado com a cor ligada (num vídeo de 20 s: até 30 s no Mac, 1 a 3 min no Windows), copia para
+`sequencia/2-cor.mp4` e abre. Pronto quando imprime "Pronto: … 2-cor.mp4 · com cor".
 
 Diga em uma linha onde está o arquivo. O próximo passo é `/inserir`, numa conversa nova.
 
@@ -49,8 +49,8 @@ número por pedido, rode o passo 1 de novo, mostre a folha nova e espere o sim p
 
 | Pedido | Campo de `look` | Passo | Faixa |
 |---|---|---|---|
-| "mais quente" | `calor` | +0.2 | 0 a 1 |
-| "menos quente", "a pele ficou laranja" | `calor` e depois `saturacao` | −0.2 · −3 | `calor` até 0; `saturacao` de −10 a 5 |
+| "mais quente" | `calor` | +0.4 | 0 a 1 |
+| "menos quente", "a pele ficou laranja" | `calor` e depois `saturacao` | −0.4 · −3 | `calor` até 0; `saturacao` de −10 a 5 |
 | "mais claro" | `sombra` | +6 | −20 a 20 |
 | "mais escuro" | `sombra` | −6 | −20 a 20 |
 | "mais contraste", "mais vivo" | `contraste` | +4 | −20 a 20 |

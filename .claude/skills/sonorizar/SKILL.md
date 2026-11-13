@@ -109,7 +109,7 @@ Mude só o que a pessoa pediu no `som.json`, mixe e entregue de novo (passo 4):
 
 | Pedido | O que mudar |
 |---|---|
-| "Troca a trilha por outra da pasta" | o `arquivo` da trilha: a próxima de `marca/sons/trilhas/` que combina |
+| "Troca a trilha por outra da pasta" | o `arquivo` da trilha: a seguinte na listagem do `sons.py`; diga qual entrou (título e autor, do `creditos.md`) |
 | "Tira o efeito do segundo 5" | apague a linha do efeito que cai nesse segundo (o `--resumo` mostra os tempos) |
 | "Música mais baixa" | `abaixo_da_voz` + 4 |
 | "Música mais alta" | `abaixo_da_voz` − 3, sem passar de 12; confira a linha "Trilha embaixo da fala" (20 ou mais) |

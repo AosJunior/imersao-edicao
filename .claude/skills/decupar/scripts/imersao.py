@@ -86,7 +86,15 @@ def entregar(origem, pasta_video, etapa):
     """Copia o resultado da etapa para sequencia/<n>-<nome>.mp4, abre e devolve o caminho."""
     destino = sequencia(pasta_video) / ETAPAS[etapa]
     destino.parent.mkdir(parents=True, exist_ok=True)
-    shutil.copy2(origem, destino)
+    try:
+        shutil.copy2(origem, destino)
+    except PermissionError:
+        # Windows: o vídeo antigo ainda está aberto no player e não pode ser trocado. Grava ao lado, com outro nome.
+        novo = destino.with_name(destino.stem + "-novo" + destino.suffix)
+        shutil.copy2(origem, novo)
+        print(f"Aviso: o {destino.name} antigo está aberto em outro programa e não pôde ser trocado. O vídeo novo é o "
+              f"{novo.name}. Feche o player antes do próximo passo.")
+        destino = novo
     abrir(destino)
     return destino
 

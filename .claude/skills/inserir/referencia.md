@@ -8,7 +8,7 @@ prender cada efeito à peça.
 {
   "cabeca_y": 430,
   "camadas": [ ... ],
-  "legenda": {"destaques": [], "nomes": [], "correcoes": {}, "esconder": []},
+  "legenda": {"destaques": [], "nomes": [], "correcoes": {}, "apagar": [], "esconder": []},
   "estilo": {}
 }
 ```
@@ -33,9 +33,20 @@ palavra. Âncora numa palavra que o corte tirou é erro, com o nome da palavra.
 ## cabeca_y
 
 O topo do cabelo, em px, no quadro 1080×1920 (0 é o topo da tela). As peças ficam entre a zona segura (y 260, onde
-o Instagram põe o nome do perfil) e a cabeça. Cada tipo precisa de uma altura livre: gancho 150, balão 90, número
-300, etapas 330, gráfico 300. Sem essa altura, a peça desce para o peito (pé em y 1520) e a legenda some enquanto
-ela está na tela. `"y"` numa camada fixa o pé da peça à mão.
+o Instagram põe o nome do perfil) e 50 px acima do cabelo, e encolhem para caber. Cada tipo cabe acima da cabeça a
+partir de um `cabeca_y` mínimo:
+
+| Tipo | `cabeca_y` a partir de |
+|---|---|
+| balão | 400 |
+| gancho | 440 |
+| número | 510 |
+| gráfico | 540 |
+| etapas | 560 |
+
+Abaixo disso a peça desce para o peito (pé em y 1520) e a legenda some enquanto ela está na tela. `"y"` numa
+camada fixa o pé da peça à mão, em px: serve para descer mais uma peça que desceu e ainda pega o queixo
+(`"y": 1580`), ou para ajustar a altura de uma que está em cima.
 
 ## camadas
 
@@ -63,7 +74,8 @@ Automática, a partir do `palavras-corte.json`: de 2 a 4 palavras por vez, minú
 
 - `destaques`: âncoras de palavra (`"F2:celular"`). A palavra sai na fonte de destaque, maior e na cor de destaque.
 - `nomes`: nomes próprios, escritos como devem aparecer (`"Claude"`, `"Instagram"`).
-- `correcoes`: o que o Whisper ouviu errado → o certo (`{"Cloud": "Claude"}`).
+- `correcoes`: o que o Whisper ouviu errado → o certo (`{"Cloud": "Claude"}`). Vale para toda vez que a palavra aparece.
+- `apagar`: âncoras de palavras que a pessoa não disse e o Whisper inventou (`"F4:ou"`). Só aquela some.
 - `esconder`: pares `[de, ate]` em que a legenda some.
 
 ## estilo (só para mudar o padrão)

@@ -108,8 +108,9 @@ Pode instalar.
 
 Se aparecer um botão pedindo permissão, clique em permitir. Não feche o Claude enquanto baixa.
 
-**No Windows:** depois de instalar, ele pede para você fechar o Claude, abrir de novo na mesma pasta e mandar o
-comando outra vez. No Mac sem o Homebrew, ele pede para você colar um comando no Terminal e digitar a senha do Mac.
+**No Windows:** depois de instalar, ele pede para você sair do Claude (botão direito no ícone do Claude ao lado do
+relógio › Sair), abrir de novo na mesma pasta e mandar o comando outra vez. **No Mac sem o Homebrew**, ele pede para
+você colar um comando no Terminal e digitar a senha do Mac.
 
 Quando a lista de cortes aparecer, **leia**. Se estiver certa, responda:
 

@@ -40,7 +40,7 @@ HYPERFRAMES = "hyperframes@0.9.26"
 GSAP = "https://cdn.jsdelivr.net/npm/gsap@3.15.0/dist/gsap.min.js"
 W, H = 1080, 1920
 TIPOS = ("gancho", "balao", "numero", "etapas", "grafico", "html")
-PRECISA = {"gancho": 150, "balao": 90, "numero": 300, "etapas": 330, "grafico": 300, "html": 200}  # px livres acima da cabeça
+PRECISA = {"gancho": 130, "balao": 90, "numero": 200, "etapas": 250, "grafico": 230, "html": 200}  # px livres entre a zona segura e a cabeça
 FPS_OK = {"24/1": "24", "25/1": "25", "30/1": "30", "50/1": "50", "60/1": "60",
           "24000/1001": "24000/1001", "30000/1001": "30000/1001", "60000/1001": "60000/1001"}
 UNIDADES = {"mil", "milhao", "milhoes", "bilhao", "bilhoes", "reais", "real", "anos", "ano", "dias", "dia",
@@ -271,6 +271,17 @@ def resolver(pasta, plano):
                 dest.add((w["frase"], w.get("n")))
         except ErroContrato as e:
             erros.append(f"legenda.destaques[{k}]: {e}")
+    fora = set()
+    for k, a in enumerate(lg.get("apagar") or []):
+        try:
+            _, w = anc.resolver(a)
+            if w is None:
+                erros.append(f"legenda.apagar[{k}] «{a}»: aponte uma palavra (\"F4:ou\")")
+            else:
+                fora.add((w["frase"], w.get("n")))
+        except ErroContrato as e:
+            erros.append(f"legenda.apagar[{k}]: {e}")
+    palavras = [w for w in palavras if (w["frase"], w.get("n")) not in fora]
     esconder = [(c["de"], c["ate"]) for c in camadas if c["legenda"] == "some"]
     for k, par in enumerate(lg.get("esconder") or []):
         if isinstance(par, (list, tuple)) and len(par) == 2:
@@ -306,6 +317,11 @@ def resolver(pasta, plano):
             j += 1
         grupos.append(g)
         i = j
+    for n in range(1, len(grupos)):                  # palavra sozinha no fim da frase: puxa a última do grupo anterior
+        ant, g = grupos[n - 1], grupos[n]
+        if (len(g) == 1 and len(ant) >= 3 and nmax >= 2 and g[0].get("frase") == ant[-1].get("frase")
+                and g[0]["a"] - ant[-1]["b"] < 0.35):
+            g.insert(0, ant.pop())
     legenda = []
     for n, g in enumerate(grupos):
         a = g[0]["a"]
@@ -315,8 +331,9 @@ def resolver(pasta, plano):
         for x0, x1 in sorted(esconder):          # começa escondido: entra quando a peça sai, se sobrar tempo de ler
             if x0 - 0.02 <= a < x1:
                 a = x1
+        cheio = b - a
         b = min([b] + [x0 for x0, x1 in esconder if a < x0 < b])
-        if b - a < 0.3:
+        if b - a < 0.3 or (b - a < 0.7 and b - a < cheio - 0.05):   # sobrou só um piscar antes da peça: não mostra
             continue
         partes = [(limpar(w), (w["frase"], w.get("n")) in dest) for w in g]
         partes = [(t, d) for t, d in partes if t]
