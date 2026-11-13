@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "defaultMode": "acceptEdits",
+    "allow": [
+      "Bash(uv run .claude/skills/:*)",
+      "Bash(uv --version)",
+      "Bash(ffmpeg -version)",
+      "Bash(node --version)",
+      "Bash(brew --version)"
+    ]
+  }
+}

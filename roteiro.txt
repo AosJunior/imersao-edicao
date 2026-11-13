@@ -1,0 +1,35 @@
+ROTEIRO DO PRIMEIRO VÍDEO
+Uns 20 segundos. Leia uma vez em voz alta antes de gravar.
+
+  Esse é o meu primeiro vídeo editado com inteligência artificial.
+
+  Eu gravei no celular e pedi a edição por escrito.
+
+  Esse título em cima da minha cabeça? Foi só pedir.
+
+  Foram quatro etapas: cortar, cor, inserções e som.
+
+  Aprendi hoje, na imersão de edição de vídeo com Claude Code.
+
+  Comenta o que você achou.
+
+
+COMO GRAVAR
+- Celular em pé, na altura dos olhos, com um palmo livre acima da cabeça.
+- De uma vez só, sem parar a gravação.
+- Errou? Respire e repita a frase inteira.
+- Erre uma frase de propósito e repita: é o que o passo 1 vai tirar.
+- Quem quiser pode começar com "Oi, eu sou [nome]."
+
+Depois, ponha o vídeo em: videos > meu-primeiro-video > brutos
+
+
+AS INSERÇÕES DESTE ROTEIRO (o passo 3, /inserir, lê esta tabela)
+
+Onde na fala                                   | O que aparece                                          | Tipo
+-----------------------------------------------|--------------------------------------------------------|---------------------------
+Frase 1, desde o primeiro quadro               | O título "Meu primeiro vídeo editado com IA"           | gancho
+Frase 3, em "em cima da minha cabeça"          | Um título acima da cabeça: "editado com Claude Code"   | título em cima da cabeça
+Frase 4, em "quatro etapas"                    | O número 4 grande e uma barra de quatro partes que     | número e gráfico (etapas)
+                                               | acende em "cortar", "cor", "inserções" e "som"         |
+O vídeo inteiro                                | Legenda de 2 a 4 palavras por vez                      | legenda

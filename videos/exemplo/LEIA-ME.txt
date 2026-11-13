@@ -1,0 +1,12 @@
+EXEMPLO (plano B)
+
+Aqui fica o mesmo roteiro da aula já editado, com o resultado de cada passo, para quem ficou para trás
+acompanhar e terminar o próprio vídeo depois:
+
+  brutos/               o vídeo gravado, como saiu do celular
+  sequencia/1-decupado.mp4
+  sequencia/2-cor.mp4
+  sequencia/3-insercoes.mp4
+  sequencia/4-final.mp4
+
+Se esta pasta ainda está só com este arquivo, o exemplo será enviado pelo link da aula.

@@ -1,0 +1,15 @@
+Fontes do estilo dinâmico
+
+BeVietnamPro-Bold.ttf        texto: legenda, gancho, números
+BeVietnamPro-Medium.ttf      apoio: títulos pequenos dos painéis
+BeVietnamPro-ExtraBold.ttf   reserva
+InstrumentSerif-Italic.ttf   destaque: a palavra que carrega a frase
+InstrumentSerif-Regular.ttf  reserva
+
+Origem: repositório oficial do Google Fonts (github.com/google/fonts, pastas ofl/bevietnampro e
+ofl/instrumentserif), baixadas em 13/11/2026.
+Licença: SIL Open Font License 1.1. Pode usar em qualquer vídeo, inclusive pago, e repassar os arquivos
+junto com a licença. Os textos da licença estão ao lado: OFL-BeVietnamPro.txt e OFL-InstrumentSerif.txt.
+
+Para usar no CapCut ou no Canva, instale os arquivos .ttf (dois cliques no Mac; botão direito, Instalar,
+no Windows).

@@ -1,0 +1,23 @@
+# o que o aluno põe e o que as skills gravam não entra no repositório
+videos/*/brutos/*
+!videos/*/brutos/COLOQUE-SEU-VIDEO-AQUI.txt
+videos/*/sequencia/*
+!videos/*/sequencia/LEIA-ME.txt
+videos/*/decupagem*/
+videos/*/insercoes/
+videos/*/som/
+videos/*/entrega/
+!videos/exemplo/LEIA-ME.txt
+
+# estado da pasta (saudação feita, recado mostrado)
+.imersao/*
+!.imersao/oferta.md
+
+# sistema e ferramentas
+.DS_Store
+Thumbs.db
+__pycache__/
+*.pyc
+.pytest_cache/
+node_modules/
+*.zip

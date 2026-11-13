@@ -1,0 +1,2 @@
+Ponha aqui o vídeo que você gravou (o arquivo que veio do celular, do jeito que veio).
+Um vídeo só. Depois, no Claude, mande: /decupar

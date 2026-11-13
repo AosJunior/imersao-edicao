@@ -1,0 +1,205 @@
+<!doctype html>
+<html lang="pt-BR" data-resolution="portrait">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1080, height=1920" />
+    <title>Inserções</title>
+    <script src="__GSAP__"></script>
+    <style>
+      /*FONTES*/
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body { width: 1080px; height: 1920px; overflow: hidden; background: #000; }
+      #root { position: relative; width: 1080px; height: 1920px; overflow: hidden; color: #fff;
+              font-family: "Legenda", "Helvetica Neue", "Segoe UI", Arial, sans-serif; }
+      #fundo { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; object-fit: cover; }
+      em { font-family: "Destaque", Georgia, "Times New Roman", serif; font-style: italic; font-weight: 400; }
+
+      /* legenda: troca seca com a fala */
+      .leg { position: absolute; left: 70px; width: 940px; text-align: center; line-height: 1; white-space: nowrap;
+             font-weight: 700; z-index: 2; }
+      .leg span { display: inline-block; }
+      .leg em { font-size: 1.3em; line-height: 0.8; color: var(--acento); }
+
+      /* peças: cada uma numa faixa de largura cheia, crescendo para cima a partir da base */
+      .peca { position: absolute; left: 0; width: 1080px; display: flex; justify-content: center; z-index: 3; }
+      .peca.esquerda { justify-content: flex-start; padding-left: 80px; }
+      .peca.direita { justify-content: flex-end; padding-right: 80px; }
+      .peca .in { transform-origin: 50% 100%; }
+
+      .placa { background: #FCFCFC; color: #111; border-radius: 0.3em; padding: 0.32em 0.62em 0.36em; max-width: 940px;
+               font-weight: 700; font-size: 1em; line-height: 1.1; text-align: center; text-wrap: balance;
+               letter-spacing: -0.01em; box-shadow: 0 12px 44px rgba(0, 0, 0, 0.3); }
+      .placa em { font-size: 1.24em; line-height: 0.9; letter-spacing: 0; display: inline-block; }
+
+      .balao { position: relative; background: #111; color: #fff; border-radius: 999px; padding: 0.36em 0.82em 0.4em;
+               font-weight: 700; font-size: 1em; line-height: 1.1; white-space: nowrap;
+               box-shadow: 0 10px 34px rgba(0, 0, 0, 0.35); }
+      .balao::after { content: ""; position: absolute; left: 50%; bottom: -0.34em; margin-left: -0.3em;
+                      border-left: 0.3em solid transparent; border-right: 0.3em solid transparent;
+                      border-top: 0.38em solid #111; }
+      .balao em { font-size: 1.22em; line-height: 0.9; }
+
+      .num { text-align: center; text-shadow: 0 6px 30px rgba(0, 0, 0, 0.55), 0 2px 5px rgba(0, 0, 0, 0.4); }
+      .num .linha { font-weight: 700; font-size: 1em; line-height: 0.95; letter-spacing: -0.035em; white-space: nowrap;
+                    font-variant-numeric: tabular-nums; }
+      .num .pre { font-size: 0.5em; margin-right: 0.12em; letter-spacing: 0; }
+      .num .suf { font-family: "Destaque", Georgia, serif; font-style: italic; font-weight: 400; font-size: 0.62em;
+                  margin-left: 0.14em; letter-spacing: 0; }
+      .num .rot { font-family: "Apoio", "Legenda", Arial, sans-serif; font-weight: 500; font-size: 0.21em; line-height: 1.15;
+                  margin-top: 0.3em; letter-spacing: 0; }
+      .num .rot em { font-size: 1.2em; }
+
+      .graf { width: 920px; background: rgba(17, 17, 17, 0.9); border-radius: 36px; padding: 0.95em 1.1em 1.05em;
+              box-shadow: 0 14px 50px rgba(0, 0, 0, 0.35); font-size: 1em; }
+      .graf .tit { font-family: "Apoio", "Legenda", Arial, sans-serif; font-weight: 500; font-size: 0.92em;
+                   color: rgba(255, 255, 255, 0.72); margin-bottom: 0.2em; }
+      .graf .lin { display: grid; grid-template-columns: 5.6em 1fr; column-gap: 0.55em; align-items: center; margin-top: 0.55em; }
+      .graf .rotulo { font-weight: 700; font-size: 0.95em; line-height: 1.05; }
+      .graf .trilho { position: relative; height: 1.3em; display: flex; align-items: center; }
+      .graf .barra { height: 100%; border-radius: 0.26em; background: rgba(255, 255, 255, 0.92); transform-origin: 0 50%; min-width: 10px; }
+      .graf .lin.destaque .barra { background: var(--acento); }
+      .graf .valor { margin-left: 0.38em; font-weight: 700; font-size: 0.95em; white-space: nowrap; }
+      .graf .lin.destaque .valor { color: var(--acento); }
+      .etapas { width: 920px; background: rgba(17, 17, 17, 0.9); border-radius: 36px; padding: 0.7em 1.05em 0.95em;
+                box-shadow: 0 14px 50px rgba(0, 0, 0, 0.35); font-size: 1em; }
+      .etapas .topo { display: flex; align-items: baseline; justify-content: center; gap: 0.5em; line-height: 1; }
+      .etapas .n { font-weight: 700; font-size: 4.3em; letter-spacing: -0.03em; display: inline-block; }
+      .etapas .t { font-family: "Destaque", Georgia, serif; font-style: italic; font-size: 2.3em; }
+      .etapas .segs { display: grid; column-gap: 0.4em; margin-top: 0.55em; }
+      .etapas .b { height: 0.5em; border-radius: 0.25em; background: rgba(255, 255, 255, 0.24); overflow: hidden; }
+      .etapas .f { width: 100%; height: 100%; background: var(--acento); transform-origin: 0 50%; }
+      .etapas .r { margin-top: 0.42em; font-weight: 700; font-size: 0.9em; text-align: center; white-space: nowrap; }
+      /*CSS_LIVRE*/
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="main" data-start="0" data-duration="__DUR__" data-width="1080" data-height="1920">
+      <video id="fundo" src="assets/video.mp4" playsinline data-has-audio="true" data-start="0" data-duration="__DUR__"
+             data-track-index="0" data-volume="1"></video>
+    </div>
+    <script>
+      // Gerado pelo motion.py a partir do insercoes.json. Para mudar o vídeo, mude o plano e rode de novo.
+      const D = __DADOS__;
+      const root = document.getElementById("root");
+      const E = D.estilo, ZS = D.zona, CAB = D.cabeca;
+      root.style.setProperty("--acento", E.cor_destaque);
+      const sombra = (k) => `0 0 14px rgba(0,0,0,${E.sombra * 0.8 * k}), 0 3px 6px rgba(0,0,0,${E.sombra})`;
+      const el = (tag, cls, htmlTxt) => { const x = document.createElement(tag); if (cls) x.className = cls; if (htmlTxt != null) x.innerHTML = htmlTxt; return x; };
+      const clip = (cls, de, ate, trilha) => {
+        const c = el("div", "clip " + cls);
+        c.dataset.start = de.toFixed(3); c.dataset.duration = (ate - de).toFixed(3); c.dataset.trackIndex = String(trilha);
+        root.appendChild(c); return c;
+      };
+      const numero = (v, casas) => {
+        const s = Math.abs(v).toFixed(casas), p = s.split(".");
+        return (v < 0 ? "-" : "") + p[0].replace(/\B(?=(\d{3})+(?!\d))/g, ".") + (p[1] ? "," + p[1] : "");
+      };
+
+      // ---- legenda
+      const legs = D.legenda.map((g) => {
+        const c = clip("leg", g.a, g.b, 1), fs = E.tamanho;
+        c.style.fontSize = fs + "px"; c.style.color = E.cor; c.style.textShadow = sombra(1);
+        c.style.top = (E.legenda_y - fs * 0.8) + "px";
+        c.appendChild(el("span", "", g.t));
+        c.querySelectorAll("em").forEach((m) => { m.style.fontSize = E.escala_destaque + "em"; });
+        return c;
+      });
+
+      // ---- peças: acima da cabeça quando cabe; senão, abaixo do rosto (nunca por cima dele)
+      const pecas = D.camadas.map((p) => {
+        const base = p.y != null ? p.y : p.em_cima ? CAB - (p.tipo === "balao" ? 34 : 50) : Math.min(ZS[1] - 40, 1520);
+        const c = clip("peca " + (p.tipo === "balao" ? (p.lado || "centro") : ""), p.de, p.ate, 2);
+        c.style.bottom = (1920 - base) + "px";
+        let inn;
+        if (p.tipo === "gancho") {
+          inn = el("div", "in", `<div class="placa">${p.texto}</div>`); inn.style.fontSize = "72px";
+        } else if (p.tipo === "balao") {
+          inn = el("div", "in", `<div class="balao">${p.texto}</div>`); inn.style.fontSize = "56px";
+        } else if (p.tipo === "numero") {
+          inn = el("div", "in num", `<div class="linha">${p.prefixo ? `<span class="pre">${p.prefixo}</span>` : ""}<span class="val">${numero(0, p.casas)}</span>${p.sufixo ? `<span class="suf">${p.sufixo}</span>` : ""}</div>${p.texto ? `<div class="rot">${p.texto}</div>` : ""}`);
+          inn.style.fontSize = "230px";
+        } else if (p.tipo === "etapas") {
+          inn = el("div", "in etapas", `<div class="topo"><span class="n">${p.numero}</span>${p.texto ? `<span class="t">${p.texto}</span>` : ""}</div><div class="segs" style="grid-template-columns: repeat(${p.itens.length}, 1fr)">` +
+            p.itens.map((it) => `<div class="seg"><div class="b"><div class="f"></div></div><div class="r">${it.texto}</div></div>`).join("") + "</div>");
+          inn.style.fontSize = "44px";
+        } else if (p.tipo === "grafico") {
+          const max = Math.max(...p.barras.map((b) => b.valor), 1e-9);
+          inn = el("div", "in graf", (p.titulo ? `<div class="tit">${p.titulo}</div>` : "") + p.barras.map((b) =>
+            `<div class="lin${b.destaque ? " destaque" : ""}"><div class="rotulo">${b.rotulo}</div><div class="trilho"><div class="barra" style="width:${(Math.max(b.valor, 0) / max * 72).toFixed(2)}%"></div><div class="valor">${b.texto}</div></div></div>`).join(""));
+          inn.style.fontSize = "40px";
+        } else {
+          inn = el("div", "in", p.html);
+        }
+        c.appendChild(inn);
+        return { p, c, inn, alto: p.alto };
+      });
+
+      const montar = () => {
+        // encolhe o que passou da largura ou da altura livre
+        legs.forEach((c) => { const s = c.firstChild; let fs = parseFloat(c.style.fontSize), n = 0;
+          while (s.offsetWidth > 940 && fs > 40 && n++ < 60) { fs -= 4; c.style.fontSize = fs + "px"; } });
+        pecas.forEach(({ p, inn, alto }) => {
+          if (p.tipo === "html") return;
+          let fs = parseFloat(inn.style.fontSize), n = 0;
+          const piso = { gancho: 40, balao: 34, numero: 110, etapas: 26, grafico: 26 }[p.tipo];
+          if (p.tipo === "numero") {                         // mede com o número final, que é o mais largo
+            inn.querySelector(".val").textContent = numero(p.valor, p.casas);
+          }
+          while ((inn.offsetWidth > 940 || inn.offsetHeight > alto) && fs > piso && n++ < 80) { fs -= fs > 120 ? 8 : 2; inn.style.fontSize = fs + "px"; }
+          if (p.tipo === "numero") inn.querySelector(".val").textContent = numero(0, p.casas);
+        });
+
+        const tl = gsap.timeline({ paused: true });
+        pecas.forEach(({ p, inn }) => {
+          const de = p.de, ate = p.ate;
+          if (p.tipo === "gancho") {                         // já se lê no quadro 0
+            tl.fromTo(inn, { scale: 0.94, y: 18 }, { scale: 1, y: 0, duration: 0.5, ease: "expo.out" }, de);
+            inn.querySelectorAll("em").forEach((m, i) =>
+              tl.fromTo(m, { scale: 1.12 }, { scale: 1, duration: 0.55, ease: "back.out(2.2)" }, de + 0.14 + i * 0.1));
+            tl.to(inn, { opacity: 0, y: -16, duration: 0.2, ease: "power3.in" }, ate - 0.2);
+          } else if (p.tipo === "balao") {
+            tl.fromTo(inn, { scale: 0.4, rotation: -11 }, { scale: 1, rotation: -3, duration: 0.4, ease: "back.out(1.9)" }, de);
+            tl.fromTo(inn, { opacity: 0 }, { opacity: 1, duration: 0.1, ease: "power1.out" }, de);
+            tl.to(inn, { scale: 0.86, opacity: 0, duration: 0.15, ease: "power3.in" }, ate - 0.15);
+          } else if (p.tipo === "numero") {
+            const val = inn.querySelector(".val"), o = { v: 0 };
+            tl.fromTo(inn, { y: 70, scale: 0.9 }, { y: 0, scale: 1, duration: 0.45, ease: "expo.out" }, de);
+            tl.fromTo(inn, { opacity: 0 }, { opacity: 1, duration: 0.14, ease: "power1.out" }, de);
+            tl.to(o, { v: p.valor, duration: Math.min(1.0, Math.max(0.5, (ate - de) * 0.4)), ease: "power2.out",
+                       onUpdate: () => { val.textContent = numero(o.v, p.casas); } }, de + 0.04);
+            const rot = inn.querySelector(".rot");
+            if (rot) tl.fromTo(rot, { opacity: 0, y: 14 }, { opacity: 1, y: 0, duration: 0.3, ease: "power4.out" }, de + 0.4);
+            tl.to(inn, { opacity: 0, y: -18, duration: 0.18, ease: "power3.in" }, ate - 0.18);
+          } else if (p.tipo === "etapas") {
+            tl.fromTo(inn, { y: 56, scale: 0.96 }, { y: 0, scale: 1, duration: 0.45, ease: "expo.out" }, de);
+            tl.fromTo(inn, { opacity: 0 }, { opacity: 1, duration: 0.14, ease: "power1.out" }, de);
+            tl.fromTo(inn.querySelector(".n"), { scale: 0.5 }, { scale: 1, duration: 0.5, ease: "back.out(2)" }, de + 0.08);
+            inn.querySelectorAll(".seg").forEach((sg, i) => {
+              const t = p.itens[i].t;
+              tl.fromTo(sg.querySelector(".f"), { scaleX: 0 }, { scaleX: 1, duration: 0.32, ease: "expo.out" }, t);
+              tl.fromTo(sg.querySelector(".r"), { opacity: 0.38, y: 8 }, { opacity: 1, y: 0, duration: 0.26, ease: "power4.out" }, t);
+            });
+            tl.to(inn, { opacity: 0, y: -18, duration: 0.18, ease: "power3.in" }, ate - 0.18);
+          } else if (p.tipo === "grafico") {
+            tl.fromTo(inn, { y: 56, scale: 0.96 }, { y: 0, scale: 1, duration: 0.45, ease: "expo.out" }, de);
+            tl.fromTo(inn, { opacity: 0 }, { opacity: 1, duration: 0.14, ease: "power1.out" }, de);
+            inn.querySelectorAll(".lin").forEach((l, i) => {
+              const t = de + 0.22 + i * 0.16;
+              tl.fromTo(l.querySelector(".barra"), { scaleX: 0 }, { scaleX: 1, duration: 0.8, ease: "expo.out" }, t);
+              tl.fromTo(l.querySelector(".valor"), { opacity: 0, x: -14 }, { opacity: 1, x: 0, duration: 0.3, ease: "power4.out" }, t + 0.4);
+            });
+            tl.to(inn, { opacity: 0, y: -18, duration: 0.18, ease: "power3.in" }, ate - 0.18);
+          } else {
+            tl.fromTo(inn, { scale: 0.82 }, { scale: 1, duration: 0.3, ease: "back.out(1.6)" }, de);
+            tl.fromTo(inn, { opacity: 0 }, { opacity: 1, duration: 0.1, ease: "power1.out" }, de);
+            tl.to(inn, { opacity: 0, duration: 0.15, ease: "power3.in" }, ate - 0.15);
+          }
+        });
+        window.__timelines = window.__timelines || {};
+        window.__timelines["main"] = tl;
+      };
+      const pedir = ['700 100px "Legenda"', 'italic 400 100px "Destaque"', '500 40px "Apoio"'].map((f) => document.fonts.load(f).catch(() => null));
+      Promise.all(pedir).then(montar, montar);
+    </script>
+  </body>
+</html>

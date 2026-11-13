@@ -1,0 +1,18 @@
+COMECE AQUI · imersão de edição de vídeo com Claude Code
+
+1. Esta é a pasta da imersão. Dentro dela estão o guia do dia (GUIA.html), o roteiro para gravar
+   (roteiro.txt), a identidade pronta (marca) e o lugar do seu vídeo (videos).
+2. Deixe a pasta em Filmes (Mac) ou Vídeos (Windows). Fora da Mesa, de Documentos, de Downloads e do OneDrive.
+3. Abra o app do Claude e clique em Code. Não é Chat e não é Cowork.
+4. Escolha esta pasta inteira (edicao-imersao) e, se ele perguntar se confia na pasta, diga que sim.
+5. Grave o vídeo do roteiro.txt e ponha o arquivo em: videos > meu-primeiro-video > brutos
+6. No Claude, mande os quatro comandos, um por vez, na ordem:
+      /decupar     tira os erros e as pausas
+      /cor         corrige a cor
+      /inserir     põe o título, as inserções e a legenda
+      /sonorizar   põe a trilha e os efeitos
+7. O resultado de cada passo aparece em: videos > meu-primeiro-video > sequencia
+   (1-decupado.mp4, 2-cor.mp4, 3-insercoes.mp4 e, no fim, 4-final.mp4).
+8. Na primeira vez, o /decupar instala o que falta e baixa uns 2 GB. É esperado. Não é vírus.
+9. O texto exato de cada pedido está no GUIA.html. Abra com dois cliques e deixe ao lado da aula.
+10. Ficou para trás? A pasta videos > exemplo tem o mesmo vídeo já editado, passo a passo.
