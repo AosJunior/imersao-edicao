@@ -302,7 +302,7 @@ Uns 20 segundos. Leia uma vez em voz alta antes de gravar.
 >
 > Foram quatro etapas: cortar, cor, inserções e som.
 >
-> Aprendi hoje, na imersão de edição de vídeo com Claude Code.
+> Aprendi hoje, na imersão com Claude Descomplicado.
 >
 > Comenta o que você achou.
 
