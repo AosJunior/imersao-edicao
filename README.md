@@ -41,11 +41,20 @@ scripts leem umas das outras por caminho relativo, então ficaram com o nome do 
 
 ## O que mudou em relação ao kit
 
+### Voltou em 14/11, a pedido do Junior
+
+- `/decupar`: **zoom nos cortes e velocidade**, só quando a pessoa pede ("põe zoom nos cortes", "deixa mais
+  rápido"). O motor (`cortar.py`) nunca saiu; voltou a instrução na skill e na referência. O pedido do dia segue sem
+  os dois. Testado em 14/11 no Mac: corte e cor com zoom 1,12 e 1,15× de velocidade. `/inserir` e `/sonorizar`
+  sobre um vídeo com zoom ou velocidade não foram testados.
+- `/sonorizar`: **Epidemic Sound**, só quando a pessoa pede e o conector está na conversa. O som é baixado para
+  `marca/sons/` e anotado no `creditos.md`. Não testado nesta pasta; o aluno, sem assinatura, segue com os sons CC0.
+
 ### Saiu
 
 - Skills: `/minha-edicao`, `/criticar`, `/reel-novela`, `docs-init`, `primeiro-valor`. Nada de `/black-motion` nem
   `/motion-apple`.
-- Da `/decupar`: a cor (virou o `/cor`), velocidade e zoom, a lista de ganchos e de "onde cabe imagem", a
+- Da `/decupar`: a cor (virou o `/cor`), a lista de ganchos e de "onde cabe imagem", a
   `decupagem.md`, a oferta do final à parte, o XML do Premiere e o guia do CapCut como entrega (o `cortar.py` ainda
   grava os dois arquivos na pasta de trabalho, só não são anunciados), a conferência com Whisper do vídeo cortado, a
   chamada à `/criticar`, o "pedido completo" com grilling, o LUT (`lut_capcut.py` não veio).
@@ -55,7 +64,7 @@ scripts leem umas das outras por caminho relativo, então ficaram com o nome do 
   da marca, `prompts.md` de imagem gerada, e o navegador do Playwright (600 MB a menos para baixar). Saíram também
   as cópias das skills oficiais de GSAP e HyperFrames (`referencias/`), o modo "100 % motion só com a voz", os
   agentes por cena e a telemetria ligada (o script desliga).
-- Da `/sonorizar`: a busca de trilha fora da pasta (Epidemic, Reels da pessoa, YouTube, Pixabay), o `identificar.py`
+- Da `/sonorizar`: a busca de trilha nos Reels da pessoa, no YouTube e no Pixabay, o `identificar.py`
   (Shazam), o áudio em alta, as três candidatas com prévia (agora propõe **uma**), a roleta montada, a conferência
   de fala com Whisper (`ouvir.py` não veio), a pasta `entrega/`, a versão sem trilha, "Fala baixa".
 

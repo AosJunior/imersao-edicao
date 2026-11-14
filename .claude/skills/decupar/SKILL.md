@@ -1,6 +1,6 @@
 ---
 name: decupar
-description: Passo 1 da imersão de edição de vídeo. Tira de um vídeo falado os erros, as frases gravadas de novo e as pausas, mostra a lista de cortes e entrega o vídeo cortado, sem cor. Na primeira vez, instala o que falta no computador. Use quando a pessoa mandar /decupar ou pedir para decupar, cortar erros e pausas, ou corrigir um corte já feito.
+description: Passo 1 da imersão de edição de vídeo. Tira de um vídeo falado os erros, as frases gravadas de novo e as pausas, mostra a lista de cortes e entrega o vídeo cortado, sem cor. Se a pessoa pedir, põe zoom nos cortes e acelera o vídeo. Na primeira vez, instala o que falta no computador. Use quando a pessoa mandar /decupar ou pedir para decupar, cortar erros e pausas, pôr zoom nos cortes, deixar o vídeo mais rápido, ou corrigir um corte já feito.
 ---
 
 # /decupar · passo 1
@@ -126,6 +126,23 @@ A ordem da lista é a ordem do vídeo. `de` e `ate` são do bruto: a frase (`"F4
 `"F4:título"`, `"F4:fim"`) ou segundos. O `cortes.json` desta etapa fica sem `"cor"`. Os outros campos estão em
 [referencia.md](referencia.md); leia só se precisar de um.
 
+### Zoom e velocidade (só quando a pessoa pede)
+
+O pedido do dia sai sem zoom e sem velocidade. Se a pessoa pedir no próprio `/decupar` ou depois ("põe zoom nos
+cortes", "deixa mais dinâmico", "acelera um pouco"), acrescente ao `cortes.json`:
+
+- **Zoom nos cortes**: `"zoom": {"ancora": [0.5, 0.4], "niveis": [1.0, 1.12], "alternar_na_pausa": true}`. Cada
+  emenda dentro de um trecho troca de nível e volta na seguinte: a emenda vira um corte de câmera e o pulo da
+  imagem some. `ancora` é o ponto dos olhos no quadro (fração `[x, y]`): abra um quadro do vídeo e ajuste, para o
+  rosto ficar parado quando o zoom troca. Para dar ênfase a uma frase, ponha `"zoom": 1.12` no trecho dela.
+  Fique entre 1.0 e 1.2: mais que isso corta a cabeça e tira o lugar do título do passo 3.
+- **Velocidade**: `"velocidade": 1.15` acelera vídeo e voz juntos, e a voz não fica fina. "Um pouco mais rápido"
+  é 1.1 a 1.15; "bem mais rápido", 1.25. Acima de 1.3 a fala cansa: avise antes.
+
+Diga na lista de cortes o que entrou (por exemplo "com zoom nos cortes e 1,15× de velocidade"). Com zoom ou
+velocidade o vídeo é gravado em pedaços e demora mais que o corte simples (com bruto em 4K, uns 80 s por minuto de
+vídeo no Mac e de 3 a 5 min por minuto no Windows); avise antes de gravar.
+
 Confira a duração e o tempo de cada frase no vídeo cortado:
 
 ```
@@ -163,8 +180,15 @@ a pausa é o vão entre o `b` de uma palavra e o `a` da seguinte, perto desse se
 | "Ficou corrido", "cortou o fim da palavra" | `"ajustes": {"T2.ate": 0.08}` termina o 2º trecho 0,08 s depois (`T2.de` mexe no começo); ou suba `pausa_max` para 0.35 |
 | "Tira a frase sobre X" | divida o trecho em volta dela |
 | "Mantém a frase sobre X" | devolva a frase ao trecho |
+| "Põe zoom nos cortes", "deixa mais dinâmico" | o bloco `"zoom"` do passo 4 |
+| "Deixa mais rápido", "acelera" | `"velocidade": 1.15` (ou o número que ela disser, de 0.5 a 2.0) |
+| "Tira o zoom", "volta a velocidade normal" | apague o campo `"zoom"` ou o `"velocidade"` |
+| "O zoom cortou a minha cabeça" | desça os `niveis` (por exemplo `[1.0, 1.08]`) ou suba o `y` da `ancora` |
 
 Se o vídeo já passou pelo `/cor`, o `entregar.py` percebe e atualiza o `2-cor.mp4` com o corte novo.
+
+Zoom e velocidade mudam o tempo e o enquadramento do vídeo. Se a pessoa já fez o `/inserir` ou o `/sonorizar`,
+avise em uma linha que esses passos precisam rodar de novo, porque as peças e os sons estão presos ao vídeo antigo.
 
 ## Quando falha
 
@@ -177,4 +201,5 @@ isso ela acompanha pela pasta `videos/exemplo`.
 - Vídeo gravado deitado: o corte sai deitado. Rode `uv run .claude/skills/decupar/scripts/enquadrar.py
   "<pasta decupagem>"`, ponha `"vertical": true` no `cortes.json` e entregue de novo: o recorte segue o rosto.
 - O corte tira imagem e som juntos, no mesmo ponto.
+- O zoom recorta o quadro do próprio bruto: gravado em 4K, aguenta até 2× sem perder nitidez; em 1080, fique até 1.2.
 - Esta etapa é mecânica: esforço baixo ou médio.

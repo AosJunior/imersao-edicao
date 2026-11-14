@@ -48,6 +48,31 @@ O Claude escreve em `videos/<pasta>/sequencia/decupagem/cortes.json`; o `cortar.
 - `ajustes`: deslocamento fino da borda de um trecho, em segundos, de -1 a 1. `"T2.de": 0.04` começa o 2º trecho
   40 ms depois; `"T2.ate": 0.08` termina 80 ms depois (devolve o fim de uma palavra comida).
 
+## Velocidade (só quando a pessoa pede)
+
+`"velocidade": 1.15` acelera vídeo e voz juntos (a voz não fica fina). Vai de 0.5 a 2.0. O `--resumo` e o
+`palavras-corte.json` já saem no tempo acelerado, que é o que o `/inserir` e o `/sonorizar` leem.
+
+## Zoom (só quando a pessoa pede)
+
+```json
+"zoom": {"ancora": [0.5, 0.4], "niveis": [1.0, 1.12], "alternar_na_pausa": true},
+"trechos": [{"de": "F1", "ate": "F2", "zoom": 1.0}, {"de": "F4", "ate": "F7", "zoom": 1.12}]
+```
+
+- `zoom.ancora`: o ponto do quadro de saída que fica parado no zoom, em fração `[x, y]` (0 a 1). Ponha perto dos
+  olhos; sem ela, `[0.5, 0.4]`.
+- `zoom.niveis`: os níveis usados, de 1.0 (sem zoom) a 3.0. Para o vídeo do dia, `[1.0, 1.12]`.
+- `zoom.alternar_na_pausa: true`: cada emenda **dentro** de um trecho (pausa tirada) troca para o nível vizinho e
+  volta na emenda seguinte. A emenda vira um corte de câmera, e o pulo de imagem some.
+- `"zoom"` num trecho: o nível daquele trecho (1.0 se faltar).
+- O recorte sai da resolução original do bruto (4K vira 1080 sem perder nitidez até 2×). Com `"vertical"`, o zoom
+  aperta dentro da janela 9:16.
+
+Com velocidade ou zoom, o vídeo sai em pedaços (cada um com o número exato de quadros e de amostras de som, para a
+boca não sair da fala), guardados na pasta de trabalho: a primeira vez demora mais, e uma correção refaz só os
+pedaços que mudaram.
+
 ## Vertical (só vídeo gravado deitado)
 
 `"vertical": true` usa o centro do rosto achado pelo `enquadrar.py`; `{"centro_x": 0.42}` fixa à mão (fração da

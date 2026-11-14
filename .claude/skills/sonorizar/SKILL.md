@@ -1,6 +1,6 @@
 ---
 name: sonorizar
-description: Passo 4 da imersão de edição de vídeo. Põe uma trilha e poucos efeitos sonoros no vídeo, só com os sons da pasta marca/sons, mixa com a voz na frente e entrega o vídeo final em -14 LUFS com os créditos. Use quando a pessoa mandar /sonorizar ou pedir música, trilha, efeito sonoro, mixagem, ou para trocar a trilha ou tirar um efeito.
+description: Passo 4 da imersão de edição de vídeo. Põe uma trilha e poucos efeitos sonoros no vídeo com os sons da pasta marca/sons (ou do Epidemic Sound, só se a pessoa pedir e tiver o conector), mixa com a voz na frente e entrega o vídeo final em -14 LUFS com os créditos. Use quando a pessoa mandar /sonorizar ou pedir música, trilha, efeito sonoro, mixagem, ou para trocar a trilha, usar o Epidemic Sound ou tirar um efeito.
 ---
 
 # /sonorizar · passo 4
@@ -9,8 +9,10 @@ A pessoa já tem o vídeo com as inserções (`sequencia/3-insercoes.mp4`). Voc�
 efeitos, mostra a lista de sons, espera o sim, mixa e entrega `sequencia/4-final.mp4`.
 
 **Todo som sai de `marca/sons/`**: trilhas em `trilhas/`, efeitos em `efeitos/`, e o `creditos.md` diz o clima de
-cada trilha e quando usar cada efeito. Som de fora só entra se a pessoa puser o arquivo nessa pasta e disser de onde
-veio. Efeito é arquivo gravado, usado como está. Nunca gere som por código (tom, ruído, síntese): sai metálico.
+cada trilha e quando usar cada efeito. Som de fora entra de dois jeitos, e só quando a pessoa pede: ela põe o
+arquivo nessa pasta e diz de onde veio, ou pede o Epidemic Sound (seção "Epidemic Sound", abaixo). Sem pedido, use
+só o que já está na pasta. Efeito é arquivo gravado, usado como está. Nunca gere som por código (tom, ruído,
+síntese): sai metálico.
 
 A **voz manda**: a trilha fica bem abaixo da fala e abaixa sozinha quando a pessoa fala. Efeito é pontuação: só
 onde algo acontece na tela, cada um com o seu motivo.
@@ -40,6 +42,29 @@ da fala, se houver.
 - **Trilha**: a que combina com o clima do vídeo, pela coluna Clima. Uma só, do começo ao fim.
 - **Efeitos**: um por peça que entra (o gancho fica mudo: nada no primeiro segundo) e, no máximo, um no fecho. O
   mesmo tipo de evento leva o mesmo som. Em um vídeo de 20 s isso dá 2 ou 3 efeitos.
+
+### Epidemic Sound (só quando a pessoa pede)
+
+Vale quando ela escreve "usa o Epidemic Sound", "pega uma trilha do Epidemic" ou parecido.
+
+1. Veja se o conector está nesta conversa: as ferramentas dele são `SearchRecordings`, `DownloadRecording`,
+   `SearchSoundEffects` e `DownloadSoundEffect`. **Sem elas**, diga em uma linha que o Epidemic Sound precisa da
+   assinatura dela conectada ao Claude (Configurações › Conectores) e ofereça seguir com os sons da pasta.
+2. **Trilha**: `SearchRecordings` com o clima do vídeo em inglês, `vocals: false` e a faixa de bpm do clima.
+   Escolha uma (duas, se ela pediu opções), diga título e autor e por que ela.
+3. **Efeito**: `SearchSoundEffects` pelo nome do som. Use como veio, só cortado no tamanho do evento.
+4. Baixe na hora, porque o link vale poucos minutos (`DownloadRecording` ou `DownloadSoundEffect`, em WAV):
+
+   ```
+   uv run .claude/skills/sonorizar/scripts/sons.py --baixar "<link>" "marca/sons/trilhas/<nome-curto>.wav"
+   ```
+
+   Efeito vai para `marca/sons/efeitos/`.
+5. Anote o som em `marca/sons/creditos.md`, numa linha nova da tabela certa: arquivo, título, autor, Fonte
+   `Epidemic Sound`, o ID da faixa, Licença `Epidemic Sound, assinatura da conta conectada (não repassar o
+   arquivo)` e o clima. Sem essa linha o `sonorizar.py` recusa o som.
+6. Siga para a lista de sons como com qualquer som da pasta. Diga à pessoa que essa trilha é da assinatura dela:
+   serve nos vídeos dela enquanto a assinatura valer, e o arquivo não é para repassar.
 
 ## 3. Lista de sons
 
@@ -110,6 +135,7 @@ Mude só o que a pessoa pediu no `som.json`, mixe e entregue de novo (passo 4):
 | Pedido | O que mudar |
 |---|---|
 | "Troca a trilha por outra da pasta" | o `arquivo` da trilha: a seguinte na listagem do `sons.py`; diga qual entrou (título e autor, do `creditos.md`) |
+| "Usa uma trilha do Epidemic Sound" | a seção "Epidemic Sound" do passo 2; depois troque o `arquivo` da trilha |
 | "Tira o efeito do segundo 5" | apague a linha do efeito que cai nesse segundo (o `--resumo` mostra os tempos) |
 | "Música mais baixa" | `abaixo_da_voz` + 4 |
 | "Música mais alta" | `abaixo_da_voz` − 3, sem passar de 12; confira a linha "Trilha embaixo da fala" (20 ou mais) |

@@ -139,6 +139,15 @@ No segundo [8], [sobrou uma pausa]. Corrige só isso.
 
 Uma correção por vez. Se ele tirou uma frase boa: `Mantém a frase sobre [assunto].`
 
+Quer o vídeo mais dinâmico? É opcional. Mande **um** destes e assista de novo:
+
+```
+Põe zoom nos cortes.
+```
+```
+Deixa o vídeo um pouco mais rápido.
+```
+
 **Deu certo quando** você assistiu de novo e o defeito sumiu.
 
 ---

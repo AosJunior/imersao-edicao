@@ -38,7 +38,8 @@ formato do `insercoes.json`). Âncora numa palavra que o corte tirou para o scri
 
 Cada som: `arquivo`. Título, autor, fonte e licença saem da linha do arquivo em `marca/sons/creditos.md` (tabela
 com a coluna `Arquivo` e as colunas Título, Autor, Fonte, ID e Licença). Som sem licença em lugar nenhum é erro:
-anote a linha dele no `creditos.md` antes de usar.
+anote a linha dele no `creditos.md` antes de usar. Som do Epidemic Sound: Fonte `Epidemic Sound`, o ID da faixa e Licença
+`Epidemic Sound, assinatura da conta conectada (não repassar o arquivo)`.
 
 ## trilha
 
