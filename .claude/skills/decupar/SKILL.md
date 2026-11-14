@@ -1,17 +1,27 @@
 ---
 name: decupar
-description: Passo 1 da imersão de edição de vídeo. Tira de um vídeo falado os erros, as frases gravadas de novo e as pausas, mostra a lista de cortes e entrega o vídeo cortado, sem cor. Se a pessoa pedir, põe zoom nos cortes e acelera o vídeo. Na primeira vez, instala o que falta no computador. Use quando a pessoa mandar /decupar ou pedir para decupar, cortar erros e pausas, pôr zoom nos cortes, deixar o vídeo mais rápido, ou corrigir um corte já feito.
+description: Passo 1 da imersão de edição de vídeo, em duas partes. Corta de um vídeo falado os erros, as frases gravadas de novo e as pausas (mostra a lista de cortes antes) e depois corrige a cor do vídeo cortado, sem filtro (mostra o antes e depois antes). Se a pessoa pedir, põe zoom nos cortes e acelera o vídeo. Na primeira vez, instala o que falta no computador. Use quando a pessoa mandar /decupar ou pedir para decupar, cortar erros e pausas, corrigir, clarear ou esquentar a cor, pôr zoom nos cortes, deixar o vídeo mais rápido, ou corrigir um corte já feito.
 ---
 
 # /decupar · passo 1
 
-A pessoa gravou um vídeo curto falando para a câmera. Você transcreve, decide o que sai, mostra a lista de cortes,
-espera o sim e entrega `sequencia/1-decupado.mp4`, **sem cor** (a cor é o passo 2, `/cor`). O bruto só é lido.
+A pessoa gravou um vídeo curto falando para a câmera. Este passo tem duas partes, cada uma com o seu sim:
+
+1. **O corte.** Você transcreve, decide o que sai, mostra a lista de cortes, espera o sim e entrega
+   `sequencia/1-decupado.mp4`, ainda sem cor.
+2. **A cor.** Você mostra o antes × depois, espera o sim e entrega `sequencia/2-cor.mp4`: o mesmo corte com a cor
+   corrigida. Está na seção "A cor", no fim.
+
+O que a pessoa pediu decide por onde começar. Pedido de corte ("tira os erros e as pausas"), ou `/decupar` sozinho
+sem `1-decupado.mp4`: comece no passo 1 e, depois de entregar o corte, ofereça a cor. Pedido de cor ("corrige a
+luz e o branco", "mais quente") com o `1-decupado.mp4` no lugar: vá direto à seção "A cor". Se ela escreveu "não
+mexe na cor", entregue só o corte e diga que a cor é o próximo pedido. O bruto só é lido.
 
 Os scripts ficam em `.claude/skills/decupar/scripts/`; rode sempre a partir da pasta da imersão (a que tem `marca/`).
 A saudação do primeiro uso e o jeito de falar estão no `CLAUDE.md` da pasta.
 
-Se `sequencia/decupagem/cortes.json` já existe para o vídeo, é uma correção: vá ao passo 6.
+Se `sequencia/decupagem/cortes.json` já existe para o vídeo e o pedido é sobre o corte, é uma correção: vá ao
+passo 6.
 
 ## 1. Conferir o computador
 
@@ -165,7 +175,8 @@ uv run .claude/skills/decupar/scripts/entregar.py "videos/<pasta>"
 Ele grava o vídeo em 1080×1920 (uns 15 s por minuto de vídeo no Mac; 1 a 2 min por minuto no Windows), copia para
 `sequencia/1-decupado.mp4` e abre. Pronto quando imprime "Pronto: … 1-decupado.mp4".
 
-Diga em uma linha onde está o arquivo e que o vídeo abriu para ela assistir com som. O próximo passo é `/cor`.
+Diga em uma linha onde está o arquivo e que o vídeo abriu para ela assistir com som. Falta a cor: diga que,
+depois de conferir o corte, é só pedir a cor (seção "A cor").
 
 ## 6. Corrigir
 
@@ -185,10 +196,64 @@ a pausa é o vão entre o `b` de uma palavra e o `a` da seguinte, perto desse se
 | "Tira o zoom", "volta a velocidade normal" | apague o campo `"zoom"` ou o `"velocidade"` |
 | "O zoom cortou a minha cabeça" | desça os `niveis` (por exemplo `[1.0, 1.08]`) ou suba o `y` da `ancora` |
 
-Se o vídeo já passou pelo `/cor`, o `entregar.py` percebe e atualiza o `2-cor.mp4` com o corte novo.
+Se a cor já foi aplicada, o `entregar.py` percebe e atualiza o `2-cor.mp4` com o corte novo.
 
 Zoom e velocidade mudam o tempo e o enquadramento do vídeo. Se a pessoa já fez o `/inserir` ou o `/sonorizar`,
 avise em uma linha que esses passos precisam rodar de novo, porque as peças e os sons estão presos ao vídeo antigo.
+
+## A cor (segunda parte)
+
+A pessoa já tem o vídeo cortado (`sequencia/1-decupado.mp4`). Você mostra o antes × depois, espera o sim e entrega
+`sequencia/2-cor.mp4`. É **correção**: tira o tom puxado da luz e dá um acabamento leve, com a pele rosada e
+natural, sem filtro. Sem o `1-decupado.mp4`, o corte ainda não rodou: diga isso e comece pelo passo 1.
+
+### C1. Mostrar o antes × depois
+
+```
+uv run .claude/skills/decupar/scripts/aplicar_cor.py "videos/<pasta>"
+```
+
+Sem a pasta, ele usa a do único vídeo que estiver em `videos/*/brutos/`. Leva menos de 10 s no Mac e uns 30 s no
+Windows. Ele grava `sequencia/decupagem/cor-antes-depois.jpg` (em cima antes, embaixo depois) e abre a folha no
+computador da pessoa. O vídeo ainda não muda.
+
+Abra a folha você também (Read) e olhe a pele: rosada e natural, sem laranja nem cinza. Se a saída trouxer
+"ATENÇÃO", ajuste a receita (C3) antes de mostrar.
+
+Diga em uma linha o que a correção fez e pergunte: "Posso aplicar?"
+
+Pronto quando a folha existe e a pessoa viu.
+
+### C2. Aplicar
+
+Com o sim ("Pode aplicar."):
+
+```
+uv run .claude/skills/decupar/scripts/aplicar_cor.py "videos/<pasta>" --aplicar
+```
+
+Ele refaz o vídeo cortado com a cor ligada (num vídeo de 20 s: até 30 s no Mac, 1 a 3 min no Windows), copia para
+`sequencia/2-cor.mp4` e abre. Pronto quando imprime "Pronto: … 2-cor.mp4 · com cor".
+
+Diga em uma linha onde está o arquivo. O próximo passo é `/inserir`, numa conversa nova.
+
+### C3. Outra cor
+
+A receita em uso fica em `sequencia/decupagem/cor-proposta.json` (nasce de `marca/cores/cor.json`). Mude **um**
+número por pedido, rode o C1 de novo, mostre a folha nova e espere o sim para o C2.
+
+| Pedido | Campo de `look` | Passo | Faixa |
+|---|---|---|---|
+| "mais quente" | `calor` | +0.4 | 0 a 1 |
+| "menos quente", "a pele ficou laranja" | `calor` e depois `saturacao` | −0.4 · −3 | `calor` até 0; `saturacao` de −10 a 5 |
+| "mais claro" | `sombra` | +6 | −20 a 20 |
+| "mais escuro" | `sombra` | −6 | −20 a 20 |
+| "mais contraste", "mais vivo" | `contraste` | +4 | −20 a 20 |
+| "mais suave", "lavado demais" → menos | `contraste` | −4 | −20 a 20 |
+| "sem acabamento, só a correção" | apague o `look` | | |
+
+`"corrigir": true` (luz e branco medidos no próprio vídeo) fica sempre ligado. Pedido de filtro ou de copiar a cor
+de outro vídeo fica fora desta skill: diga isso em uma linha e ofereça o ajuste mais próximo da tabela.
 
 ## Quando falha
 

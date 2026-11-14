@@ -13,7 +13,8 @@ está entre [colchetes] você troca pelo seu.
 - `TRAVEI` + o nome do passo + uma foto da sua tela: preciso de ajuda.
 - `#tapago`: o que eu já recebi valeu o ingresso.
 
-**Os 4 passos da edição:** 1 decupar · 2 cor · 3 inserções e legenda · 4 som.
+**As 4 etapas da edição:** 1 decupar · 2 cor · 3 inserções e legenda · 4 som. São **3 comandos**: o `/decupar` faz as
+duas primeiras (corta e depois corrige a cor), o `/inserir` faz a terceira e o `/sonorizar`, a quarta.
 
 ---
 
@@ -41,7 +42,13 @@ Você precisa de:
 
 ## 11h05 · Baixar a pasta da imersão
 
-1. Clique no link do chat e baixe o arquivo `edicao-imersao.zip`.
+O link da pasta, que o Junior também cola no chat:
+
+```
+https://github.com/AosJunior/imersao-edicao/releases/latest/download/edicao-imersao.zip
+```
+
+1. Clique no link e baixe o arquivo `edicao-imersao.zip`.
 2. Abra o arquivo baixado: ele vira uma pasta. No Mac, dois cliques. No Windows, botão direito › Extrair tudo.
 3. Arraste a pasta `edicao-imersao` para **Filmes** (Mac) ou **Vídeos** (Windows).
 
@@ -85,7 +92,7 @@ seu no almoço.
 O que tem nesta pasta?
 ```
 
-**Deu certo quando** a resposta cita `marca`, `videos` e o roteiro. Digitando `/`, aparecem `decupar`, `cor`,
+**Deu certo quando** a resposta cita `marca`, `videos` e o roteiro. Digitando `/`, aparecem `decupar`,
 `inserir` e `sonorizar`.
 
 **Se travar:** se ele falar de outra pasta, feche e escolha a `edicao-imersao` de novo.
@@ -154,10 +161,10 @@ Deixa o vídeo um pouco mais rápido.
 
 ## 12h09 · Passo 2: cor
 
-Copie isto e mande:
+A cor é do mesmo comando do corte, o `/decupar`. Copie isto e mande:
 
 ```
-/cor Corrige a luz e o branco do meu vídeo, sem filtro. Me mostra o antes e depois antes de aplicar.
+/decupar Corrige a luz e o branco do meu vídeo, sem filtro. Me mostra o antes e depois antes de aplicar.
 ```
 
 Quando o antes e depois aparecer, olhe a sua pele: rosada e natural, nem laranja, nem cinza. Tudo certo? Responda:
@@ -180,7 +187,7 @@ A pele ficou laranja. Volta um pouco.
 
 **Deu certo quando** existe o arquivo `2-cor.mp4` na pasta `sequencia`.
 
-**Se travar:** se a cor não mudou, mande: `Aplica a correção de cor no 1-decupado.mp4 e me mostra o antes e depois.`
+**Se travar:** se a cor não mudou, mande: `/decupar Aplica a correção de cor no 1-decupado.mp4 e me mostra o antes e depois.`
 
 ---
 
@@ -301,5 +308,5 @@ Uns 20 segundos. Leia uma vez em voz alta antes de gravar.
 
 ## Depois da aula
 
-Nos próximos 7 dias, grave outro vídeo de 20 segundos e repita os 4 comandos, sozinho. Crie uma pasta nova dentro de
+Nos próximos 7 dias, grave outro vídeo de 20 segundos e repita os 3 comandos, sozinho. Crie uma pasta nova dentro de
 `videos`, com uma pasta `brutos` dentro, e troque o nome da pasta no primeiro comando.

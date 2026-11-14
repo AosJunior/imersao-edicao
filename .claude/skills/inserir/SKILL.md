@@ -18,7 +18,7 @@ lado. A legenda fica abaixo do queixo. Peça que tocaria o rosto sai contornada 
 se recusa a gravar o vídeo.
 
 Rode a partir da pasta da imersão. A saudação do primeiro uso e o jeito de falar estão no `CLAUDE.md` da pasta.
-Sem `sequencia/2-cor.mp4`, falta o passo 2: diga isso e ofereça o `/cor`.
+Sem `sequencia/2-cor.mp4`, falta a cor: diga isso e ofereça corrigir a cor pela `/decupar`.
 
 Se `sequencia/insercoes/insercoes.json` já existe, é uma correção: vá ao passo 5.
 

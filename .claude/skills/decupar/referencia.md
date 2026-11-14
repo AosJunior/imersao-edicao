@@ -80,7 +80,7 @@ largura, 0 = borda esquerda). Abra a `enquadrar.jpg` para conferir: a parte clar
 
 ## Cor
 
-O campo `"cor"` é do passo 2: quem escreve é o `aplicar.py` do `/cor`, quando a pessoa aprova.
+O campo `"cor"` entra depois do corte: quem escreve é o `aplicar_cor.py`, quando a pessoa aprova a cor.
 
 ## O que o cortar.py grava
 

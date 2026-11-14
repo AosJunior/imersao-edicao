@@ -17,7 +17,7 @@ estes valores como padrão: este arquivo é a regra, e o que muda um vídeo espe
 | Bordas | pelo som (`"bordas": "som"`), com o respiro natural no fim da frase |
 | Fica sempre | a fala da pessoa: só sai erro, repetição e pausa |
 
-## Cor (`/cor`)
+## Cor (`/decupar`, segunda parte)
 
 | Regra | Valor |
 |---|---|

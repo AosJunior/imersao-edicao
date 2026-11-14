@@ -1,5 +1,5 @@
 """O que é só da pasta da imersão: a pasta sequencia/, os quatro vídeos numerados, abrir o arquivo e os avisos
-de marketing (oferta). Só biblioteca padrão. As skills /decupar, /cor, /inserir e /sonorizar importam daqui."""
+de marketing (oferta). Só biblioteca padrão. As skills /decupar, /inserir e /sonorizar importam daqui."""
 import os
 import shutil
 import subprocess

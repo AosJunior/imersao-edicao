@@ -48,7 +48,8 @@ está entre [colchetes] você troca pelo seu.</p>
 <li><code>TRAVEI</code> + o nome do passo + uma foto da sua tela: preciso de ajuda.</li>
 <li><code>#tapago</code>: o que eu já recebi valeu o ingresso.</li>
 </ul>
-<p><strong>Os 4 passos da edição:</strong> 1 decupar · 2 cor · 3 inserções e legenda · 4 som.</p>
+<p><strong>As 4 etapas da edição:</strong> 1 decupar · 2 cor · 3 inserções e legenda · 4 som. São <strong>3 comandos</strong>: o <code>/decupar</code> faz as
+duas primeiras (corta e depois corrige a cor), o <code>/inserir</code> faz a terceira e o <code>/sonorizar</code>, a quarta.</p>
 <hr />
 <h2>Antes de começar</h2>
 <p>Você precisa de:</p>
@@ -69,8 +70,11 @@ está entre [colchetes] você troca pelo seu.</p>
 <p><strong>Se travar:</strong> deixe o download terminando e continue assistindo. Você só vai precisar do Claude às 11h27.</p>
 <hr />
 <h2>11h05 · Baixar a pasta da imersão</h2>
+<p>O link da pasta, que o Junior também cola no chat:</p>
+<div class="copiar"><pre><code>https://github.com/AosJunior/imersao-edicao/releases/latest/download/edicao-imersao.zip
+</code></pre><button type="button">copiar</button></div>
 <ol>
-<li>Clique no link do chat e baixe o arquivo <code>edicao-imersao.zip</code>.</li>
+<li>Clique no link e baixe o arquivo <code>edicao-imersao.zip</code>.</li>
 <li>Abra o arquivo baixado: ele vira uma pasta. No Mac, dois cliques. No Windows, botão direito › Extrair tudo.</li>
 <li>Arraste a pasta <code>edicao-imersao</code> para <strong>Filmes</strong> (Mac) ou <strong>Vídeos</strong> (Windows).</li>
 </ol>
@@ -105,7 +109,7 @@ seu no almoço.</p>
 </ol>
 <div class="copiar"><pre><code>O que tem nesta pasta?
 </code></pre><button type="button">copiar</button></div>
-<p><strong>Deu certo quando</strong> a resposta cita <code>marca</code>, <code>videos</code> e o roteiro. Digitando <code>/</code>, aparecem <code>decupar</code>, <code>cor</code>,
+<p><strong>Deu certo quando</strong> a resposta cita <code>marca</code>, <code>videos</code> e o roteiro. Digitando <code>/</code>, aparecem <code>decupar</code>,
 <code>inserir</code> e <code>sonorizar</code>.</p>
 <p><strong>Se travar:</strong> se ele falar de outra pasta, feche e escolha a <code>edicao-imersao</code> de novo.</p>
 <hr />
@@ -145,8 +149,8 @@ você colar um comando no Terminal e digitar a senha do Mac.</p>
 <p><strong>Deu certo quando</strong> você assistiu de novo e o defeito sumiu.</p>
 <hr />
 <h2>12h09 · Passo 2: cor</h2>
-<p>Copie isto e mande:</p>
-<div class="copiar"><pre><code>/cor Corrige a luz e o branco do meu vídeo, sem filtro. Me mostra o antes e depois antes de aplicar.
+<p>A cor é do mesmo comando do corte, o <code>/decupar</code>. Copie isto e mande:</p>
+<div class="copiar"><pre><code>/decupar Corrige a luz e o branco do meu vídeo, sem filtro. Me mostra o antes e depois antes de aplicar.
 </code></pre><button type="button">copiar</button></div>
 <p>Quando o antes e depois aparecer, olhe a sua pele: rosada e natural, nem laranja, nem cinza. Tudo certo? Responda:</p>
 <div class="copiar"><pre><code>Pode aplicar.
@@ -159,7 +163,7 @@ você colar um comando no Terminal e digitar a senha do Mac.</p>
 <div class="copiar"><pre><code>A pele ficou laranja. Volta um pouco.
 </code></pre><button type="button">copiar</button></div>
 <p><strong>Deu certo quando</strong> existe o arquivo <code>2-cor.mp4</code> na pasta <code>sequencia</code>.</p>
-<p><strong>Se travar:</strong> se a cor não mudou, mande: <code>Aplica a correção de cor no 1-decupado.mp4 e me mostra o antes e depois.</code></p>
+<p><strong>Se travar:</strong> se a cor não mudou, mande: <code>/decupar Aplica a correção de cor no 1-decupado.mp4 e me mostra o antes e depois.</code></p>
 <hr />
 <h2>12h44 · Almoço</h2>
 <p>Não feche o Claude. Deixe o computador na tomada. Voltamos às 14h04.</p>
@@ -261,7 +265,7 @@ quando você fala.</p>
 </blockquote>
 <hr />
 <h2>Depois da aula</h2>
-<p>Nos próximos 7 dias, grave outro vídeo de 20 segundos e repita os 4 comandos, sozinho. Crie uma pasta nova dentro de
+<p>Nos próximos 7 dias, grave outro vídeo de 20 segundos e repita os 3 comandos, sozinho. Crie uma pasta nova dentro de
 <code>videos</code>, com uma pasta <code>brutos</code> dentro, e troque o nome da pasta no primeiro comando.</p>
 <script>
   document.querySelectorAll(".copiar button").forEach(function (b) {

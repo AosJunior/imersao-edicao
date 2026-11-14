@@ -9,7 +9,7 @@ Ele não abre terminal, não edita arquivo e não lê código: isso é trabalho 
 | Passo | Comando | Entrega em `videos/<vídeo>/sequencia/` |
 |---|---|---|
 | 1 | `/decupar` | `1-decupado.mp4`: sem os erros e as pausas, sem cor |
-| 2 | `/cor` | `2-cor.mp4`: o mesmo corte com a cor corrigida |
+| 2 | `/decupar` de novo, pedindo a cor | `2-cor.mp4`: o mesmo corte com a cor corrigida |
 | 3 | `/inserir` | `3-insercoes.mp4`: gancho, 2 inserções animadas e legenda |
 | 4 | `/sonorizar` | `4-final.mp4`: trilha e efeitos, pronto para postar |
 

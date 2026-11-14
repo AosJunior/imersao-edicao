@@ -1,7 +1,7 @@
 O Claude entrega aqui o resultado de cada passo:
 
   1-decupado.mp4    depois do /decupar
-  2-cor.mp4         depois do /cor
+  2-cor.mp4         depois da cor, que é da /decupar
   3-insercoes.mp4   depois do /inserir
   4-final.mp4       depois do /sonorizar: é o vídeo para postar
 

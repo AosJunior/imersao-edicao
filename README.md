@@ -14,11 +14,11 @@ dentro da própria pasta. Montado em 13/11/2026, a partir do kit público `AosJu
 |---|---|---|
 | abrir | `O que tem nesta pasta?` | |
 | 1 | `/decupar O meu vídeo está em videos/meu-primeiro-video/brutos. Tira os erros e as pausas, não mexe na cor e me mostra o que vai cortar antes de cortar.` | `Pode instalar.` · `Pode cortar.` |
-| 2 | `/cor Corrige a luz e o branco do meu vídeo, sem filtro. Me mostra o antes e depois antes de aplicar.` | `Pode aplicar.` |
+| 2 | `/decupar Corrige a luz e o branco do meu vídeo, sem filtro. Me mostra o antes e depois antes de aplicar.` | `Pode aplicar.` |
 | 3 | `/inserir Coloca o gancho, as 2 inserções do roteiro e a legenda. Antes de animar, me mostra uma imagem de cada inserção.` | `Aprovado. Pode animar.` |
 | 4 | `/sonorizar Coloca trilha e efeitos só com os sons da pasta marca/sons. Não cria nenhum som. Me mostra onde entra cada som antes de mixar.` | `Pode mixar.` |
 
-Os quatro comandos também funcionam sozinhos (`/decupar`, sem a frase) e em conversa nova: o estado fica em
+Os comandos também funcionam sozinhos (`/decupar`, sem a frase) e em conversa nova: o estado fica em
 `videos/<vídeo>/sequencia/`.
 
 ## Estrutura
@@ -42,6 +42,11 @@ scripts leem umas das outras por caminho relativo, então ficaram com o nome do 
 ## O que mudou em relação ao kit
 
 ### Voltou em 14/11, a pedido do Junior
+
+- **A cor voltou para dentro da `/decupar`** (14/11, 8h30). Não existe mais o comando `/cor`: a skill `/decupar` tem
+  duas partes, o corte e a cor, cada uma com o seu sim, e o script da cor é `decupar/scripts/aplicar_cor.py`. Os
+  arquivos continuam os mesmos (`1-decupado.mp4` e `2-cor.mp4`). Onde este README ainda diz `/cor`, leia "a cor da
+  `/decupar`". Testado no Mac: corte, cor, correção de corte depois da cor e leitura pelo `/inserir`.
 
 - `/decupar`: **zoom nos cortes e velocidade**, só quando a pessoa pede ("põe zoom nos cortes", "deixa mais
   rápido"). O motor (`cortar.py`) nunca saiu; voltou a instrução na skill e na referência. O pedido do dia segue sem

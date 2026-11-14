@@ -7,8 +7,8 @@
 Uso:  uv run "<skill>/scripts/entregar.py" ["<pasta do vídeo>"]
 
 Roda o cortar.py --final e copia o resultado para <pasta do vídeo>/sequencia/1-decupado.mp4.
-Se a cor do passo 2 já foi aplicada neste vídeo (o corte está sendo corrigido depois do /cor), quem regrava é o
-aplicar.py do /cor: o 2-cor.mp4 é atualizado com o corte novo e o 1-decupado.mp4 fica como estava.
+Se a cor do passo 2 já foi aplicada neste vídeo (o corte está sendo corrigido depois da cor), quem regrava é o
+aplicar_cor.py: o 2-cor.mp4 é atualizado com o corte novo e o 1-decupado.mp4 fica como estava.
 """
 import json
 import subprocess
@@ -31,13 +31,13 @@ def main():
     cortes = json.loads((dec / "cortes.json").read_text(encoding="utf-8"))
     if cortes.get("cor"):
         if (dec / ".dados" / "cor-aplicada.json").is_file():
-            print("Este vídeo já passou pelo /cor: regravando o corte novo já com a cor (2-cor.mp4).")
-            r = subprocess.run([sys.executable, str(AQUI.parent.parent / "cor" / "scripts" / "aplicar.py"), str(video),
+            print("Este vídeo já tem a cor aplicada: regravando o corte novo já com a cor (2-cor.mp4).")
+            r = subprocess.run([sys.executable, str(AQUI / "aplicar_cor.py"), str(video),
                                 "--aplicar", *[a for a in sys.argv[1:] if a.startswith("--")]])
             sys.exit(r.returncode)
         cortes.pop("cor")    # a cor é do passo 2: aqui o corte sai sem ela
         (dec / "cortes.json").write_text(json.dumps(cortes, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
-        print("Tirei o \"cor\" do cortes.json: a cor entra no passo 2 (/cor).")
+        print("Tirei o \"cor\" do cortes.json: a cor entra depois do corte, pela própria /decupar.")
     t0 = time.time()
     r = subprocess.run([sys.executable, str(AQUI / "cortar.py"), str(dec), "--final"], capture_output=True, text=True,
                        encoding="utf-8", errors="replace")

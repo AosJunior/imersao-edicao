@@ -1,6 +1,6 @@
 Cores do estilo dinâmico
 
-cor.json   a receita da correção de cor do vídeo (passo 2, /cor): corrige a luz e o branco e dá um
+cor.json   a receita da correção de cor do vídeo (passo 2, feito pela /decupar): corrige a luz e o branco e dá um
            acabamento leve. Não é filtro.
 
 As cores das peças e da legenda (branco, tinta, placa e a cor de destaque #FFD23F) estão na tabela

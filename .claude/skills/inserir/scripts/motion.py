@@ -14,7 +14,7 @@ da cabeça; sem espaço, afasta o vídeo; senão abaixo ou ao lado do rosto). Pe
 acusa em vermelho e sai com código 2, e o --video não grava.
 
 Lê  <pasta do vídeo>/sequencia/insercoes/insercoes.json (o plano, que o Claude escreve; formato no referencia.md),
-    sequencia/decupagem/final.mp4 (já com a cor do /cor) e palavras-corte.json, e as fontes de marca/fontes/.
+    sequencia/decupagem/final.mp4 (já com a cor da /decupar) e palavras-corte.json, e as fontes de marca/fontes/.
 Grava em <pasta do vídeo>/sequencia/:
   insercoes/motion/             o projeto HyperFrames (index.html gerado; não edite à mão, mude o plano)
   insercoes/storyboard.jpg      as peças paradas no ápice, numeradas, para aprovar antes de animar
@@ -128,7 +128,7 @@ def comando(args):
 def achar_video(arg):
     p = pasta_do_video(arg)
     if not (p / "sequencia" / "decupagem" / "palavras-corte.json").is_file():
-        sair(f"Não achei o vídeo decupado em {p / 'sequencia' / 'decupagem'}. Primeiro vem o /decupar e depois o /cor.")
+        sair(f"Não achei o vídeo decupado em {p / 'sequencia' / 'decupagem'}. Primeiro vem o /decupar, que corta e corrige a cor.")
     return p
 
 
@@ -161,10 +161,10 @@ def resolver(pasta, plano):
     pc = json.loads((dec / "palavras-corte.json").read_text(encoding="utf-8"))
     video = (pasta / "sequencia" / "insercoes" / plano["video"]).resolve() if plano.get("video") else dec / "final.mp4"
     if not video.is_file():
-        sair(f"Falta o vídeo {video}. Ele nasce no /decupar (passo 1) e ganha a cor no /cor (passo 2).")
+        sair(f"Falta o vídeo {video}. Ele nasce no /decupar, que corta e depois corrige a cor.")
     cortes = dec / "cortes.json"
     if cortes.is_file() and not json.loads(cortes.read_text(encoding="utf-8")).get("cor") and "--sem-cor" not in sys.argv:
-        sair("O vídeo ainda está sem a cor do passo 2. Rode o /cor antes (ou, se a pessoa quer mesmo seguir sem cor, "
+        sair("O vídeo ainda está sem a cor. Peça a cor na /decupar antes (ou, se a pessoa quer mesmo seguir sem cor, "
              "repita este comando com --sem-cor).", 2)
     dur = sondar(video)["duracao"]
     if pc.get("duracao") and abs(float(pc["duracao"]) - dur) > 0.5:
@@ -581,7 +581,7 @@ def quadros(pasta):
     """Três quadros do vídeo cortado, em 540×960, para ver o enquadramento (px do quadro × 2 = px do vídeo)."""
     video = pasta / "sequencia" / "decupagem" / "final.mp4"
     if not video.is_file():
-        sair(f"Falta o vídeo {video}. Ele nasce no /decupar (passo 1) e ganha a cor no /cor (passo 2).")
+        sair(f"Falta o vídeo {video}. Ele nasce no /decupar, que corta e depois corrige a cor.")
     dur = sondar(video)["duracao"]
     destino = pasta / "sequencia" / "insercoes" / "quadros"
     destino.mkdir(parents=True, exist_ok=True)

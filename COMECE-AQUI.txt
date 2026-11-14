@@ -6,9 +6,9 @@ COMECE AQUI · imersão de edição de vídeo com Claude Code
 3. Abra o app do Claude e clique em Code. Não é Chat e não é Cowork.
 4. Escolha esta pasta inteira (edicao-imersao) e, se ele perguntar se confia na pasta, diga que sim.
 5. Grave o vídeo do roteiro.txt e ponha o arquivo em: videos > meu-primeiro-video > brutos
-6. No Claude, mande os quatro comandos, um por vez, na ordem:
+6. No Claude, mande os comandos, um por vez, na ordem:
       /decupar     tira os erros e as pausas
-      /cor         corrige a cor
+      /decupar     de novo, pedindo a cor: corrige a luz e o branco
       /inserir     põe o título, as inserções e a legenda
       /sonorizar   põe a trilha e os efeitos
 7. O resultado de cada passo aparece em: videos > meu-primeiro-video > sequencia

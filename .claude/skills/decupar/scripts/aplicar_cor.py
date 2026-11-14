@@ -2,10 +2,10 @@
 # requires-python = ">=3.9"
 # dependencies = []
 # ///
-"""/cor da imersão: corrige a cor do vídeo já decupado. Primeiro mostra o antes × depois; depois aplica.
+"""A cor da /decupar da imersão: corrige a cor do vídeo já cortado. Primeiro mostra o antes × depois; depois aplica.
 
-Uso:  uv run "<skill>/scripts/aplicar.py" ["<pasta do vídeo>"]             mostra: grava e abre a folha antes × depois
-      uv run "<skill>/scripts/aplicar.py" ["<pasta do vídeo>"] --aplicar   aplica: grava sequencia/2-cor.mp4 e abre
+Uso:  uv run "<skill>/scripts/aplicar_cor.py" ["<pasta do vídeo>"]             mostra: grava e abre a folha antes × depois
+      uv run "<skill>/scripts/aplicar_cor.py" ["<pasta do vídeo>"] --aplicar   aplica: grava sequencia/2-cor.mp4 e abre
 
 A receita da cor fica em <pasta do vídeo>/sequencia/decupagem/cor-proposta.json. Na primeira vez ela nasce da
 receita da pasta (marca/cores/cor.json). Para outra cor, o Claude edita o cor-proposta.json e roda de novo.
@@ -22,7 +22,7 @@ import time
 from pathlib import Path
 
 AQUI = Path(__file__).resolve().parent
-DECUPAR = AQUI.parent.parent / "decupar" / "scripts"
+DECUPAR = AQUI
 sys.path.insert(0, str(DECUPAR))
 from contrato import achar_marca  # noqa: E402
 from imersao import abrir, entregar, pasta_do_video, sair, utf8  # noqa: E402
@@ -87,7 +87,7 @@ def main():
     video = pasta_do_video(args[0] if args else None)
     dec = video / "sequencia" / "decupagem"
     if not (dec / "cortes.json").is_file() or not (dec / ".dados" / "info.json").is_file():
-        sair(f"Não achei o vídeo decupado em {dec}. O /cor vem depois do /decupar (passo 1).")
+        sair(f"Não achei o vídeo decupado em {dec}. A cor vem depois do corte: rode antes o corte da /decupar.")
     cor, origem = receita(dec, video)
     print(f"Receita ({origem}): {json.dumps(cor, ensure_ascii=False)}")
     t0 = time.time()
