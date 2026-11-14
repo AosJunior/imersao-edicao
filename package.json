@@ -1,0 +1,22 @@
+{
+  "name": "imersao-edicao",
+  "version": "1.0.0",
+  "description": "Pasta da imersão de edição de vídeo com Claude Code: npx github:AosJunior/imersao-edicao",
+  "bin": {
+    "imersao-edicao": "bin/instalar.mjs"
+  },
+  "type": "module",
+  "files": [
+    "bin",
+    ".claude",
+    ".imersao",
+    "marca",
+    "videos",
+    "CLAUDE.md",
+    "COMECE-AQUI.txt",
+    "GUIA.html",
+    "GUIA.md",
+    "roteiro.txt"
+  ],
+  "license": "UNLICENSED"
+}
