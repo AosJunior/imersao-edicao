@@ -2,7 +2,7 @@
 // Monta a pasta da imersão de edição de vídeo no computador do aluno.
 //   npx github:AosJunior/imersao-edicao            cria (ou atualiza) a pasta edicao-imersao em Filmes / Vídeos
 //   npx github:AosJunior/imersao-edicao <pasta>    cria em outro lugar
-// Pode rodar de novo: atualiza as skills, a marca e o guia, e nunca mexe no que está em videos/.
+// Pode rodar de novo: atualiza as skills e o guia, e nunca mexe na marca nem no que está em videos/.
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
@@ -10,8 +10,8 @@ import { fileURLToPath } from 'node:url';
 import { spawn } from 'node:child_process';
 
 const ORIGEM = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
-const SEMPRE = ['.claude', '.imersao', 'marca', 'CLAUDE.md', 'COMECE-AQUI.txt', 'GUIA.html', 'GUIA.md', 'roteiro.txt'];
-const SO_SE_FALTAR = ['videos'];
+const SEMPRE = ['.claude', '.imersao', 'CLAUDE.md', 'COMECE-AQUI.txt', 'GUIA.html', 'GUIA.md', 'roteiro.txt'];
+const SO_SE_FALTAR = ['videos'];   // e a marca: se a pasta já tem marca/estilo.md, a marca da pessoa fica como está
 
 function destinoPadrao() {
   const casa = os.homedir();
@@ -26,6 +26,12 @@ const ignorar = (src) => !/(^|[\\/])(__pycache__|\.DS_Store|node_modules)$/.test
 
 try {
   fs.mkdirSync(destino, { recursive: true });
+  // o CLAUDE.md que a pessoa (ou o Junior) mudou não se perde: fica uma cópia ao lado
+  const claudeMd = path.join(destino, 'CLAUDE.md');
+  if (fs.existsSync(claudeMd) && fs.readFileSync(claudeMd, 'utf8') !== fs.readFileSync(path.join(ORIGEM, 'CLAUDE.md'), 'utf8')) {
+    fs.copyFileSync(claudeMd, path.join(destino, 'CLAUDE.anterior.md'));
+  }
+  if (!jaExistia) fs.cpSync(path.join(ORIGEM, 'marca'), path.join(destino, 'marca'), { recursive: true, force: true, filter: ignorar });
   for (const item of SEMPRE) {
     const de = path.join(ORIGEM, item);
     if (fs.existsSync(de)) fs.cpSync(de, path.join(destino, item), { recursive: true, force: true, filter: ignorar });
@@ -46,7 +52,7 @@ const skills = fs.readdirSync(path.join(destino, '.claude', 'skills')).filter((n
 console.log('\n' + (jaExistia ? 'Pasta da imersão atualizada.' : 'Pasta da imersão criada.'));
 console.log('\n  ' + destino + '\n');
 console.log('Dentro dela: as skills (' + skills.map((s) => '/' + s).join(', ') + '), a marca, o roteiro e o guia (GUIA.html).');
-console.log('Os vídeos que já estavam em "videos" não foram tocados.\n');
+console.log(jaExistia ? 'A sua marca e os vídeos que já estavam na pasta não foram tocados.\n' : 'O seu vídeo vai em: videos > meu-primeiro-video > brutos\n');
 console.log('Agora:');
 console.log('  1. Abra o app do Claude e clique em Code.');
 console.log('  2. Escolha a pasta edicao-imersao (o caminho está aqui em cima).');

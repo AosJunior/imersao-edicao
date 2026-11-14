@@ -41,6 +41,17 @@ scripts leem umas das outras por caminho relativo, então ficaram com o nome do 
 
 ## O que mudou em relação ao kit
 
+### Como o aluno baixa (14/11, 8h55)
+
+```
+npx -y github:AosJunior/imersao-edicao
+```
+
+O `bin/instalar.mjs` monta a pasta `edicao-imersao` em Filmes (Mac) ou Vídeos (Windows), com as skills, a marca, o
+roteiro e o guia, e abre a pasta. Rodar de novo atualiza as skills e o guia; não mexe em `videos/` nem numa `marca/`
+que já exista, e guarda o `CLAUDE.md` anterior ao lado. Precisa de Node e de git no computador. Plano B: o zip em
+`releases/latest/download/edicao-imersao.zip`. Testado no Mac em 14/11 (31 s); não testado em Windows.
+
 ### Voltou em 14/11, a pedido do Junior
 
 - **A cor voltou para dentro da `/decupar`** (14/11, 8h30). Não existe mais o comando `/cor`: a skill `/decupar` tem

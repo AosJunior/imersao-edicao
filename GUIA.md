@@ -42,21 +42,23 @@ Você precisa de:
 
 ## 11h05 · Baixar a pasta da imersão
 
-O link da pasta, que o Junior também cola no chat:
+É um comando só. Ele baixa a pasta com tudo dentro: as skills, a identidade visual, o roteiro e este guia.
+
+Abra o **Terminal** (no Mac: aperte Cmd + Espaço, escreva Terminal e aperte Enter) ou o **PowerShell** (no Windows:
+aperte a tecla Windows, escreva PowerShell e aperte Enter). Copie isto, cole lá e aperte Enter:
 
 ```
-https://github.com/AosJunior/imersao-edicao/releases/latest/download/edicao-imersao.zip
+npx -y github:AosJunior/imersao-edicao
 ```
 
-1. Clique no link e baixe o arquivo `edicao-imersao.zip`.
-2. Abra o arquivo baixado: ele vira uma pasta. No Mac, dois cliques. No Windows, botão direito › Extrair tudo.
-3. Arraste a pasta `edicao-imersao` para **Filmes** (Mac) ou **Vídeos** (Windows).
+Ele leva menos de 1 minuto, cria a pasta `edicao-imersao` em **Filmes** (Mac) ou **Vídeos** (Windows) e abre a pasta
+para você. Não mude a pasta de lugar: fora da Mesa, de Documentos, de Downloads e do OneDrive.
 
-Não deixe a pasta na Mesa, em Documentos, em Downloads nem no OneDrive.
+**Deu certo quando** a pasta abriu e você vê `marca`, `videos`, o roteiro (`roteiro.txt`) e este guia (`GUIA.html`).
 
-**Deu certo quando** você abre a pasta e vê `marca`, `videos`, o roteiro (`roteiro.txt`) e este guia (`GUIA.html`).
-
-**Se travar:** peça no chat o link de reserva.
+**Se travar:** apareceu "command not found" ou "npx não é reconhecido"? Escreva `TRAVEI` no chat. O plano B é baixar a
+pasta por este link, abrir o arquivo e arrastar a pasta `edicao-imersao` para Filmes ou Vídeos:
+`https://github.com/AosJunior/imersao-edicao/releases/latest/download/edicao-imersao.zip`
 
 ---
 
